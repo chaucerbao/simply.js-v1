@@ -1,4 +1,6 @@
 (function(d, w) {
+  'use strict';
+
   var body = d.body,
     overlay = d.createElement('div'),
     content,
