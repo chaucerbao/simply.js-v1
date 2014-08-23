@@ -1,4 +1,4 @@
-(function(d, w) {
+;(function(w, d) {
   'use strict';
 
   var body = d.body,
@@ -6,13 +6,7 @@
     content,
     request = new XMLHttpRequest();
 
-  /* Set up the overlay */
-  overlay.id = 'modal-overlay';
-  overlay.addEventListener('click', function() {
-    modal.close();
-  });
-  d.body.appendChild(overlay);
-
+  /* Extend an object */
   var extend = function(out) {
     out = out || {};
 
@@ -29,19 +23,25 @@
     return out;
   };
 
-  w.modal = {
+  /* The modal object */
+  var modal = {
     open: function(target, options) {
       options = extend({
-        iframe: false
+        iframe: false,
+        height: '100%',
+        width: '100%'
       }, options);
 
+      /* Set up the content container */
       content = (options.iframe) ? d.createElement('iframe') : d.createElement('div');
       content.id = 'modal-content';
+      content.style.width = options.width;
+      content.style.height = options.height;
       d.body.appendChild(content);
 
       /* Populate the content */
       if (target.match(/^#/)) {
-        /* An ID */
+        /* From an element ID */
         var t = d.getElementById(target.replace(/^#/, ''));
 
         if (options.iframe) {
@@ -50,35 +50,26 @@
           content.innerHTML = t.innerHTML;
         }
       } else {
-        /* A URL */
+        /* From a URL */
         if (options.iframe) {
           content.src = target;
         } else {
-          /* AJAX */
+          /* Get the content through AJAX */
           request.open('GET', target, true);
           request.onload = function() {
             if (request.status >= 200 && request.status < 400) {
-              /* Success */
               content.innerHTML = request.responseText;
             } else {
-              /* Server returned an error */
               content.innerHTML = 'Unable to reach the content';
             }
-
-            /* Center the content vertically */
-            content.style.top = (w.innerHeight - content.offsetHeight) / 2 + 'px';
           };
           request.onerror = function() {
-            // There was a connection error of some sort
             d.body.removeChild(content);
           };
 
           request.send();
         }
       }
-
-      /* Center the content vertically */
-      content.style.top = (w.innerHeight - content.offsetHeight) / 2 + 'px';
 
       /* Make overlay and content visible */
       body.classList.add('no-scroll');
@@ -97,4 +88,14 @@
       d.body.removeChild(content);
     }
   };
-})(document, window);
+
+  /* Set up the overlay */
+  overlay.id = 'modal-overlay';
+  overlay.addEventListener('click', function() {
+    w.modal.close();
+  });
+  d.body.appendChild(overlay);
+
+  /* Reveal the modal to global space */
+  w.modal = modal;
+})(window, document);

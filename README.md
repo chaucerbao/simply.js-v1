@@ -1,6 +1,6 @@
 # Modal.js
 
-A Javascript modal library with one option. Styling is handled in the CSS.
+A Javascript modal library with just a couple options. Styling is handled in the CSS, where it should be.
 
 ## Usage
 
