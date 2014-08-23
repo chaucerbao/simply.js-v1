@@ -11,12 +11,14 @@
     out = out || {};
 
     for (var i = 1; i < arguments.length; i++) {
-      if (!arguments[i])
+      if (!arguments[i]) {
         continue;
+      }
 
       for (var key in arguments[i]) {
-        if (arguments[i].hasOwnProperty(key))
+        if (arguments[i].hasOwnProperty(key)) {
           out[key] = arguments[i][key];
+        }
       }
     }
 
@@ -25,7 +27,13 @@
 
   /* The modal object */
   var modal = {
-    open: function(target, options) {
+    open: function(target, options, callback) {
+      /* Allow flexible arguments */
+      if (typeof arguments[1] === 'function') { callback = arguments[1]; }
+      if (typeof options !== 'object') { options = {}; }
+      if (typeof callback !== 'function') { callback = function() {}; }
+
+      /* Merge the given options with defaults */
       options = extend({
         iframe: false,
         height: '100%',
@@ -49,16 +57,20 @@
         } else {
           content.innerHTML = t.innerHTML;
         }
+
+        callback();
       } else {
         /* From a URL */
         if (options.iframe) {
           content.src = target;
+          content.addEventListener('load', callback);
         } else {
           /* Get the content through AJAX */
           request.open('GET', target, true);
           request.onload = function() {
             if (request.status >= 200 && request.status < 400) {
               content.innerHTML = request.responseText;
+              callback();
             } else {
               content.innerHTML = 'Unable to reach the content';
             }
@@ -91,10 +103,13 @@
 
   /* Set up the overlay */
   overlay.id = 'modal-overlay';
-  overlay.addEventListener('click', function() {
-    w.modal.close();
-  });
+  overlay.addEventListener('click', function() { w.modal.close(); });
   d.body.appendChild(overlay);
+
+  /* Let <ESC> close the modal */
+  d.addEventListener('keydown', function(e) {
+    if (d.getElementById('modal-content') && e.keyCode === 27) { w.modal.close(); }
+  });
 
   /* Reveal the modal to global space */
   w.modal = modal;
