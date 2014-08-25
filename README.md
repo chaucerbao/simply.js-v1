@@ -4,12 +4,14 @@ A Javascript modal library with just a couple options. Styling is handled in the
 
 ## Usage
 
-`modal.open(target, options);` creates a modal, where `target` is a URL or a DOM ID, like `#my-element`.
+`modal.open(target[, options[, callback]]);` creates a modal, where `target` is a URL or a DOM ID, like `#my-element`.
 
 ```javascript
 // Defaults
 options = {
-  iframe: false
+  iframe: false,
+  height: '100%',
+  width: '100%'
 };
 ```
 
