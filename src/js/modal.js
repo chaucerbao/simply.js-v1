@@ -11,7 +11,7 @@ var Modal = (function(window, document) {
   var extend = function(out) {
     out = out || {};
 
-    for (var i = 1; i < arguments.length; i++) {
+    for (var i = 1, length = arguments.length; i < length; i++) {
       if (!arguments[i]) { continue; }
 
       for (var key in arguments[i]) {
