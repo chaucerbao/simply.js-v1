@@ -7,39 +7,25 @@ var Modal = (function(window, document) {
     request = new XMLHttpRequest(),
     isInitialized = false;
 
-  /* Extend an object */
-  var extend = function(out) {
-    out = out || {};
-
-    for (var i = 1, length = arguments.length; i < length; i++) {
-      if (!arguments[i]) { continue; }
-
-      for (var key in arguments[i]) {
-        if (arguments[i].hasOwnProperty(key)) { out[key] = arguments[i][key]; }
-      }
-    }
-
-    return out;
-  };
-
   var init = function() {
-    /* Set up the overlay */
-    overlay.id = 'modal-overlay';
-    overlay.addEventListener('click', function() { close(); });
-    document.body.appendChild(overlay);
+    if (!isInitialized) {
+      /* Set up the overlay */
+      overlay.id = 'modal-overlay';
+      overlay.addEventListener('click', function() { close(); });
+      document.body.appendChild(overlay);
 
-    /* Let <ESC> close the modal */
-    document.addEventListener('keydown', function(e) {
-      if (document.getElementById('modal-content') && e.keyCode === 27) { close(); }
-    });
+      /* Let <ESC> close the modal */
+      document.addEventListener('keydown', function(e) {
+        if (document.getElementById('modal-content') && e.keyCode === 27) { close(); }
+      });
+
+      isInitialized = true;
+    }
   };
 
   /* Open a modal */
   var open = function(target, options, callback) {
-    if (!isInitialized) {
-      init();
-      isInitialized = true;
-    }
+    init();
 
     /* Allow flexible arguments */
     if (typeof arguments[1] === 'function') { callback = arguments[1]; }
@@ -112,6 +98,21 @@ var Modal = (function(window, document) {
     body.classList.remove('no-scroll');
 
     document.body.removeChild(content);
+  };
+
+  /* Extend an object */
+  var extend = function(out) {
+    out = out || {};
+
+    for (var i = 1, length = arguments.length; i < length; i++) {
+      if (!arguments[i]) { continue; }
+
+      for (var key in arguments[i]) {
+        if (arguments[i].hasOwnProperty(key)) { out[key] = arguments[i][key]; }
+      }
+    }
+
+    return out;
   };
 
   return {
