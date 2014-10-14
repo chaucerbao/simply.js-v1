@@ -14,6 +14,11 @@ var Modal = (function(window, document) {
         if (layers.length && e.keyCode === 27) { cancel(); }
       });
 
+      /* Clicking the overlay cancels the modal */
+      body.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('modal-overlay')) { cancel(); }
+      });
+
       isInitialized = true;
     }
   };
@@ -143,8 +148,6 @@ var Modal = (function(window, document) {
 
     layer.appendChild(overlay);
     layer.appendChild(content);
-
-    overlay.addEventListener('click', function(e) { cancel(); });
 
     layers.push({
       element: layer,
