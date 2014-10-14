@@ -11,7 +11,7 @@ var Modal = (function(window, document) {
     if (!isInitialized) {
       /* Let <ESC> close the modal */
       document.addEventListener('keydown', function(e) {
-        if (layers.length && e.keyCode === 27) { close(); }
+        if (layers.length && e.keyCode === 27) { cancel(); }
       });
 
       isInitialized = true;
@@ -28,9 +28,9 @@ var Modal = (function(window, document) {
       iframe: false,
       height: '100%',
       width: '100%',
-      onLoad: function() {},
-      onClose: function() {},
-      onCancel: function() {}
+      onLoad: function(content) {},
+      onClose: function(content) {},
+      onCancel: function(content) {}
     }, options);
 
     var layer = createLayer(options),
@@ -142,7 +142,7 @@ var Modal = (function(window, document) {
     layer.appendChild(overlay);
     layer.appendChild(content);
 
-    overlay.addEventListener('click', function(e) { close(); });
+    overlay.addEventListener('click', function(e) { cancel(); });
 
     layers.push({
       element: layer,
