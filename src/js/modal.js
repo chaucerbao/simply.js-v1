@@ -50,19 +50,19 @@ var Modal = (function(window, document) {
         content.innerHTML = t.innerHTML;
       }
 
-      options.onLoad();
+      options.onLoad(content);
     } else {
       /* Using content from a URL */
       if (options.iframe) {
         content.src = target;
-        content.addEventListener('load', options.onLoad);
+        content.addEventListener('load', function() { options.onLoad(content); });
       } else {
         /* Get the content through AJAX */
         request.open('GET', target, true);
         request.onload = function() {
           if (request.status >= 200 && request.status < 400) {
             content.innerHTML = request.responseText;
-            options.onLoad();
+            options.onLoad(content);
           } else {
             content.innerHTML = 'Unable to reach the content';
           }
@@ -102,9 +102,9 @@ var Modal = (function(window, document) {
     overlay.addEventListener('transitionend', function() {
       if (typeof runCallback === 'undefined') { runCallback = true; }
       if (runCallback) {
-        layer.options.onClose();
+        layer.options.onClose(content);
       } else {
-        layer.options.onCancel();
+        layer.options.onCancel(content);
       }
 
       body.removeChild(layer.element);

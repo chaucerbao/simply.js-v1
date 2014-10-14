@@ -77,10 +77,10 @@
       l3.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html'); });
       l4.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { iframe: true }); });
 
-      l5.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { onLoad: function() { alert('Running the callback'); } }); });
-      l6.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { iframe: true, onLoad: function() { alert('Running the callback'); } }); });
-      l7.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { onLoad: function() { alert('Running the callback'); } }); });
-      l8.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { iframe: true, onLoad: function() { alert('Running the callback'); } }); });
+      l5.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { onLoad: function(c) { alert(c); } }); });
+      l6.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { iframe: true, onLoad: function(c) { alert(c); } }); });
+      l7.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { onLoad: function(c) { alert(c); } }); });
+      l8.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { iframe: true, onLoad: function(c) { alert(c); } }); });
     </script>
   </body>
 </html>
