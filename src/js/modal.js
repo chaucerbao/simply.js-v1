@@ -9,7 +9,7 @@ var Modal = (function(window, document) {
 
   var init = function() {
     if (!isInitialized) {
-      /* Let <ESC> close the modal */
+      /* Let <ESC> cancel the modal */
       document.addEventListener('keydown', function(e) {
         if (layers.length && e.keyCode === 27) { cancel(); }
       });
@@ -37,6 +37,7 @@ var Modal = (function(window, document) {
       overlay = layer.overlay,
       content = layer.content;
 
+    /* Need to append to DOM here, otherwise we can't access the 'contentWindow' of an iFrame */
     body.appendChild(layer.element);
 
     /* Populate the content element */
@@ -91,6 +92,7 @@ var Modal = (function(window, document) {
       overlay = layer.overlay,
       content = layer.content;
 
+    /* Stop any existing XHR requests */
     request.abort();
 
     /* Make overlay and content invisible */
@@ -115,7 +117,7 @@ var Modal = (function(window, document) {
 
   /* Cancel the modal */
   var cancel = function() {
-    close(false);
+    return close(false);
   };
 
   /* Create a new modal layer and push it onto the stack */
