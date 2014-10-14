@@ -3,11 +3,21 @@
   <head>
     <title>Modal.js</title>
     <link rel="stylesheet" href="src/css/modal.css">
+    <style>
+      #add-modal {
+        background-color: #0074d9;
+        border-radius: 4px;
+        color: #fff;
+        padding: .5rem 1rem;
+        position: fixed; right: .5rem; top: .5rem; z-index: 5000;
+        text-decoration: none;
+      }
+    </style>
   </head>
   <body>
     <header>
       <nav>
-        <ul>
+        <ol>
           <li><a id="l1" href="#">Targeted ID</a></li>
           <li><a id="l2" href="#">Targeted ID in an iFrame</a></li>
 
@@ -19,14 +29,17 @@
 
           <li><a id="l7" href="#">AJAX with callback</a></li>
           <li><a id="l8" href="#">AJAX in an iFrame with callback</a></li>
-        </ul>
+        </ol>
       </nav>
     </header>
 
     <main>
+      <a id="add-modal" href="#">Open a new modal</a>
+
       <section id="s1">
         <h2>Dolor corporis reprehenderit</h2>
-        <p>Dolor illo mollitia sunt velit ipsum. Laboriosam laudantium dolorum aliquam nihil porro. Fuga ad consectetur deserunt fuga numquam? Ex animi molestiae veniam modi dolor maxime eius ad! Veritatis beatae molestiae?</p>
+        <p>Elit laborum impedit debitis ipsam recusandae. Esse dolor enim sit ab distinctio mollitia asperiores. Sit tempore asperiores harum eos architecto quam ducimus laudantium ducimus impedit commodi? Praesentium maxime maxime vitae.</p>
+        <p>Sit eum dicta cum sint obcaecati quo? Blanditiis tempore illo velit cum tenetur. Nulla voluptatem placeat voluptates culpa nobis rerum sapiente provident expedita labore possimus expedita officia et neque nisi.</p>
       </section>
 
       <section id="s2">
@@ -43,6 +56,12 @@
 
     <script src="src/js/modal.js"></script>
     <script>
+      addModal = document.getElementById('add-modal');
+      addModal.addEventListener('click', function(e) {
+        e.preventDefault();
+        modal.open('#s2', { width: (Math.random() * 60 + 20) + '%', height: (Math.random() * 60 + 20) + '%' });
+      });
+
       l1 = document.getElementById('l1');
       l2 = document.getElementById('l2');
       l3 = document.getElementById('l3');
@@ -58,10 +77,10 @@
       l3.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html'); });
       l4.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { iframe: true }); });
 
-      l5.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', function() { alert('Running the callback'); }); });
-      l6.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { iframe: true }, function() { alert('Running the callback'); }); });
-      l7.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', function() { alert('Running the callback'); }); });
-      l8.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { iframe: true }, function() { alert('Running the callback'); }); });
+      l5.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { onLoad: function() { alert('Running the callback'); } }); });
+      l6.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { iframe: true, onLoad: function() { alert('Running the callback'); } }); });
+      l7.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { onLoad: function() { alert('Running the callback'); } }); });
+      l8.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { iframe: true, onLoad: function() { alert('Running the callback'); } }); });
     </script>
   </body>
 </html>

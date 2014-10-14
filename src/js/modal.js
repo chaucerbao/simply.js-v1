@@ -1,22 +1,17 @@
 var Modal = (function(window, document) {
   'use strict';
 
-  var body = document.body,
-    overlay = document.createElement('div'),
-    content,
+  var layers = [],
+    body = document.body,
     request = new XMLHttpRequest(),
+    zIndexOffset = 100,
     isInitialized = false;
 
   var init = function() {
     if (!isInitialized) {
-      /* Set up the overlay */
-      overlay.id = 'modal-overlay';
-      overlay.addEventListener('click', function() { close(); });
-      document.body.appendChild(overlay);
-
       /* Let <ESC> close the modal */
       document.addEventListener('keydown', function(e) {
-        if (document.getElementById('modal-content') && e.keyCode === 27) { close(); }
+        if (layers.length && e.keyCode === 27) { close(); }
       });
 
       isInitialized = true;
@@ -24,31 +19,29 @@ var Modal = (function(window, document) {
   };
 
   /* Open a modal */
-  var open = function(target, options, callback) {
+  var open = function(target, options) {
     init();
 
-    /* Allow flexible arguments */
-    if (typeof arguments[1] === 'function') { callback = arguments[1]; }
+    /* Merge the options argument with defaults */
     if (typeof options !== 'object') { options = {}; }
-    if (typeof callback !== 'function') { callback = function() {}; }
-
-    /* Merge the given options with defaults */
     options = extend({
       iframe: false,
       height: '100%',
-      width: '100%'
+      width: '100%',
+      onLoad: function() {},
+      onClose: function() {},
+      onCancel: function() {}
     }, options);
 
-    /* Set up the content container */
-    content = (options.iframe) ? document.createElement('iframe') : document.createElement('div');
-    content.id = 'modal-content';
-    content.style.width = options.width;
-    content.style.height = options.height;
-    document.body.appendChild(content);
+    var layer = createLayer(options),
+      overlay = layer.overlay,
+      content = layer.content;
 
-    /* Populate the content */
+    body.appendChild(layer.element);
+
+    /* Populate the content element */
     if (target.match(/^#/)) {
-      /* From an element ID */
+      /* Using content from an existing element ID */
       var t = document.getElementById(target.replace(/^#/, ''));
 
       if (options.iframe) {
@@ -57,39 +50,47 @@ var Modal = (function(window, document) {
         content.innerHTML = t.innerHTML;
       }
 
-      callback();
+      options.onLoad();
     } else {
-      /* From a URL */
+      /* Using content from a URL */
       if (options.iframe) {
         content.src = target;
-        content.addEventListener('load', callback);
+        content.addEventListener('load', options.onLoad);
       } else {
         /* Get the content through AJAX */
         request.open('GET', target, true);
         request.onload = function() {
           if (request.status >= 200 && request.status < 400) {
             content.innerHTML = request.responseText;
-            callback();
+            options.onLoad();
           } else {
             content.innerHTML = 'Unable to reach the content';
           }
         };
         request.onerror = function() {
-          document.body.removeChild(content);
+          content.innerHTML = 'Unable to reach the content';
         };
 
         request.send();
       }
     }
 
-    /* Make overlay and content visible */
+    /* Activate CSS transitions */
     body.classList.add('no-scroll');
-    overlay.classList.add('is-active');
-    content.classList.add('is-active');
+    setTimeout(function() {
+      overlay.classList.add('is-active');
+      content.classList.add('is-active');
+    }, 0);
+
+    return layer;
   };
 
   /* Close the modal */
-  var close = function() {
+  var close = function(runCallback) {
+    var layer = layers.pop(),
+      overlay = layer.overlay,
+      content = layer.content;
+
     request.abort();
 
     /* Make overlay and content invisible */
@@ -97,7 +98,55 @@ var Modal = (function(window, document) {
     overlay.classList.remove('is-active');
     body.classList.remove('no-scroll');
 
-    document.body.removeChild(content);
+    /* Remove the modal layer from the DOM */
+    overlay.addEventListener('transitionend', function() {
+      if (typeof runCallback === 'undefined') { runCallback = true; }
+      if (runCallback) {
+        layer.options.onClose();
+      } else {
+        layer.options.onCancel();
+      }
+
+      body.removeChild(layer.element);
+    });
+
+    return layer;
+  };
+
+  /* Cancel the modal */
+  var cancel = function() {
+    close(false);
+  };
+
+  /* Create a new modal layer and push it onto the stack */
+  var createLayer = function(options) {
+    var layer = document.createElement('div'),
+      overlay = document.createElement('div'),
+      content = (options.iframe) ? document.createElement('iframe') : document.createElement('div');
+
+    layer.classList.add('modal-layer');
+    overlay.classList.add('modal-overlay');
+    content.classList.add('modal-content');
+
+    overlay.style.zIndex = zIndexOffset + layers.length;
+    content.style.zIndex = (zIndexOffset + 1) + layers.length;
+
+    content.style.width = options.width;
+    content.style.height = options.height;
+
+    layer.appendChild(overlay);
+    layer.appendChild(content);
+
+    overlay.addEventListener('click', function(e) { close(); });
+
+    layers.push({
+      element: layer,
+      overlay: overlay,
+      content: content,
+      options: options
+    });
+
+    return layers[layers.length - 1];
   };
 
   /* Extend an object */
@@ -117,7 +166,8 @@ var Modal = (function(window, document) {
 
   return {
     open: open,
-    close: close
+    close: close,
+    cancel: cancel
   };
 })(window, document);
 
