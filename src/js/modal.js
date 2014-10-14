@@ -4,8 +4,8 @@ var Modal = (function(window, document) {
   var layers = [],
     body = document.body,
     request = new XMLHttpRequest(),
-    zIndexOffset = 100,
-    isInitialized = false;
+    isInitialized = false,
+    zIndexOffset;
 
   var init = function() {
     if (!isInitialized) {
@@ -128,6 +128,11 @@ var Modal = (function(window, document) {
     overlay.classList.add('modal-overlay');
     content.classList.add('modal-content');
 
+    if (typeof zIndexOffset === 'undefined') {
+      body.appendChild(layer);
+      zIndexOffset = parseInt(window.getComputedStyle(layer).getPropertyValue('z-index')) || 100;
+      body.removeChild(layer);
+    }
     overlay.style.zIndex = zIndexOffset + layers.length;
     content.style.zIndex = (zIndexOffset + 1) + layers.length;
 
