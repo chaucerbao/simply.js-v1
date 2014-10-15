@@ -9,7 +9,7 @@ A JavaScript modal library with just a few options.
 ## Usage
 **modal.open(target[, options])**
 
-Creates a new modal, where `target` can be a URL or an element ID.
+Creates a new modal, where `target` can be a URL, an element ID, or literal HTML.
 
 ```javascript
 /* Example */

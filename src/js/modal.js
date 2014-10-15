@@ -46,20 +46,10 @@ var Modal = (function(window, document) {
     body.appendChild(layer.element);
 
     /* Populate the content element */
-    if (target.match(/^#/)) {
-      /* Using content from an existing element ID */
-      var t = document.getElementById(target.replace(/^#/, ''));
-
+    if (target.match(/^([a-z]+:)?\/\//i) || target.match(/^[\w\-. ]+$/)) {
+      /* Using content from a URL or file */
       if (options.iframe) {
-        content.contentWindow.document.write(t.innerHTML);
-      } else {
-        content.innerHTML = t.innerHTML;
-      }
-
-      options.onLoad(content);
-    } else {
-      /* Using content from a URL */
-      if (options.iframe) {
+        /* Set the iFrame source to this target */
         content.src = target;
         content.addEventListener('load', function() { options.onLoad(content); });
       } else {
@@ -79,6 +69,17 @@ var Modal = (function(window, document) {
 
         request.send();
       }
+    } else {
+      /* Using the content inside an element ID or the 'target' parameter value as the content */
+      var html = (target.match(/^#[a-zA-Z][\w:.-]*$/)) ? document.getElementById(target.replace(/^#/, '')).innerHTML : target;
+
+      if (options.iframe) {
+        content.contentWindow.document.write(html);
+      } else {
+        content.innerHTML = html;
+      }
+
+      options.onLoad(content);
     }
 
     /* Activate CSS transitions */
