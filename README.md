@@ -8,6 +8,7 @@ A JavaScript modal library with just a few options.
 
 ## Usage
 **modal.open(target[, options]);**
+
 Creates a new modal, where `target` can be a URL or an element ID.
 
 ```javascript
@@ -34,7 +35,9 @@ options = {
 ```
 
 **modal.close();**
+
 Closes the latest modal and runs the `onClose` callback. You may use the callback to access information inside the modal (e.g. append form data inside the modal to a table in the parent).
 
 **modal.cancel();**
+
 Closes the latest modal and runs the `onCancel` callback. An opened modal can be canceled by pressing the `ESC` key or by clicking anywhere in the overlay.
