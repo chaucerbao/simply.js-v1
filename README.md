@@ -38,7 +38,7 @@ options = {
 
 **modal.close()**
 
-Closes the latest modal and runs the `onClose` callback. You may use the callback to access information inside the modal (e.g. append form data inside the modal to a table in the parent).
+Closes the latest modal and runs the `onClose` callback. Should be called programmatically after a successful user action. You may use the callback to access information inside the modal (e.g. append form data from inside the modal to a table on the outside).
 
 ---
 
