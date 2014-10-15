@@ -36,9 +36,9 @@ var Modal = (function(window, document) {
       iframe: false,
       height: '100%',
       width: '100%',
-      onLoad: function(content) {},
-      onClose: function(content) {},
-      onCancel: function(content) {}
+      onLoad: function() {},
+      onClose: function() {},
+      onCancel: function() {}
     }, options);
 
     var layer = createLayer(options),
@@ -102,7 +102,7 @@ var Modal = (function(window, document) {
   /* Close the modal */
   var close = function(runCallback) {
     /* Return immediately if there are no layers (a user may click the overlay/cancel while it's still transitioning out) */
-    if (layers.length === 0) return;
+    if (layers.length === 0) { return; }
 
     var layer = layers.pop(),
       overlay = layer.overlay,
