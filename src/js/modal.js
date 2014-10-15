@@ -88,6 +88,9 @@ var Modal = (function(window, document) {
       content.classList.add('is-active');
     }, 0);
 
+    /* Add layer to the stack */
+    layers.push(layer);
+
     return layer;
   };
 
@@ -125,20 +128,22 @@ var Modal = (function(window, document) {
     return close(false);
   };
 
-  /* Create a new modal layer and push it onto the stack */
+  /* Generate a new modal layer */
   var createLayer = function(options) {
-    var layer = document.createElement('div'),
+    var element = document.createElement('div'),
       overlay = document.createElement('div'),
       content = (options.iframe) ? document.createElement('iframe') : document.createElement('div');
 
-    layer.classList.add('modal-layer');
+    /* Add classes to each element */
+    element.classList.add('modal-layer');
     overlay.classList.add('modal-overlay');
     content.classList.add('modal-content');
 
+    /* Calculate the z-index for the layer */
     if (typeof zIndexOffset === 'undefined') {
-      body.appendChild(layer);
-      zIndexOffset = parseInt(window.getComputedStyle(layer).getPropertyValue('z-index')) || 100;
-      body.removeChild(layer);
+      body.appendChild(element);
+      zIndexOffset = parseInt(window.getComputedStyle(element).getPropertyValue('z-index')) || 100;
+      body.removeChild(element);
     }
     overlay.style.zIndex = zIndexOffset + layers.length;
     content.style.zIndex = (zIndexOffset + 1) + layers.length;
@@ -146,17 +151,15 @@ var Modal = (function(window, document) {
     content.style.width = options.width;
     content.style.height = options.height;
 
-    layer.appendChild(overlay);
-    layer.appendChild(content);
+    element.appendChild(overlay);
+    element.appendChild(content);
 
-    layers.push({
-      element: layer,
+    return {
+      element: element,
       overlay: overlay,
       content: content,
       options: options
-    });
-
-    return layers[layers.length - 1];
+    };
   };
 
   /* Extend an object */
