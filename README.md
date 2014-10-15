@@ -1,13 +1,28 @@
 # Modal.js
+A JavaScript modal library with just a few options.
 
-A Javascript modal library with just a couple options. Styling is handled in the CSS.
+## Features
+* Style the modal and/or add animations with CSS3
+* Stack modals on top of each other (go nuts!)
+* Load content inline or inside an iframe
 
 ## Usage
-
-`modal.open(target[, options]);` creates a modal, where `target` is a URL or a DOM ID, like `#my-element`.
+**modal.open(target[, options]);**
+Creates a new modal, where `target` can be a URL or an element ID.
 
 ```javascript
-// Defaults
+/* Example */
+modal.open('#my-dom-element', {
+  iframe: true,
+  onLoad: function(content) { console.log('Content is available.'); },
+  onClose: function() { console.log('Closed this modal.'); }
+});
+```
+
+There are a few options you can use to customize the modal.
+
+```javascript
+// Default options
 options = {
   iframe: false,
   height: '100%',
@@ -18,6 +33,8 @@ options = {
 };
 ```
 
-`modal.close();` closes the modal and runs the `onClose` callback.
+**modal.close();**
+Closes the latest modal and runs the `onClose` callback. You may use the callback to access information inside the modal (e.g. append form data inside the modal to a table in the parent).
 
-`modal.cancel();` closes the modal and runs the `onCancel` callback.
+**modal.cancel();**
+Closes the latest modal and runs the `onCancel` callback. An opened modal can be canceled by pressing the `ESC` key or by clicking anywhere in the overlay.
