@@ -16,7 +16,10 @@ var Modal = (function(window, document) {
 
       /* Clicking the overlay cancels the modal */
       body.addEventListener('click', function(e) {
-        if (e.target && e.target.classList.contains('modal-cancel')) { cancel(); }
+        if (e.target && e.target.classList.contains('modal-cancel')) {
+          e.preventDefault();
+          cancel();
+        }
       });
 
       isInitialized = true;
