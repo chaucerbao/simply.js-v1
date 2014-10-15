@@ -60,6 +60,7 @@
         <p>Dolor corrupti accusantium ipsum consectetur officia ratione? Nesciunt aut quos adipisci dignissimos neque quaerat cupiditate eveniet. Repellat eum perspiciatis ad maiores ducimus quos ipsa aliquid necessitatibus maxime eveniet. Ipsam error!</p>
         <p>Sit vel explicabo quae quos obcaecati distinctio totam voluptate voluptatem, tempora accusamus dolore a delectus minus sint? Dolorum cupiditate quisquam rem praesentium labore! Atque tenetur nobis magnam doloribus voluptas sint?</p>
         <p>Adipisicing quod libero doloremque neque impedit illum. Saepe accusamus commodi eum repellendus et, aut! Nisi itaque animi amet facere vel fugiat? Impedit tempora magnam cumque cumque eos tempore. Totam assumenda!</p>
+        <a href="javascript:parent.modal.close();">Close</a>
       </section>
     </main>
 
@@ -84,7 +85,7 @@
       l9 = document.getElementById('l9');
 
       l1.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s1'); });
-      l2.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s1', { iframe: true }); });
+      l2.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { iframe: true }); });
       l3.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html'); });
       l4.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { iframe: true }); });
 
