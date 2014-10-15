@@ -11,22 +11,34 @@ body.no-scroll {
   background-color: rgba(0, 0, 0, .7);
 }
 
-.modal-content {
-  background-color: white;
+.modal-frame {
   margin: auto;
   max-width: 80%; max-height: 80%;
-  overflow: scroll;
 }
 
-.modal-overlay, .modal-content {
+.modal-overlay, .modal-frame {
   opacity: 0; transition: opacity .2s;
   position: fixed; left: 0; top: 0; right: 0; bottom: 0;
 }
 
-.modal-overlay.is-active, .modal-content.is-active {
+.modal-overlay.is-active, .modal-frame.is-active {
   opacity: 1;
+}
+
+.modal-content {
+  background-color: white;
+  overflow: scroll;
+  width: 100%; height: 100%;
 }
 
 iframe.modal-content {
   border: none;
+}
+
+a.modal-cancel {
+  position: absolute; right: 0; bottom: -1.4rem;
+}
+
+a.modal-cancel::before {
+  content: "Cancel";
 }

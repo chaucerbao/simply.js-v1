@@ -16,7 +16,7 @@ var Modal = (function(window, document) {
 
       /* Clicking the overlay cancels the modal */
       body.addEventListener('click', function(e) {
-        if (e.target && e.target.classList.contains('modal-overlay')) { cancel(); }
+        if (e.target && e.target.classList.contains('modal-cancel')) { cancel(); }
       });
 
       isInitialized = true;
@@ -40,6 +40,7 @@ var Modal = (function(window, document) {
 
     var layer = createLayer(options),
       overlay = layer.overlay,
+      frame = layer.frame,
       content = layer.content;
 
     /* Need to append to DOM here, otherwise we can't access the 'contentWindow' of an iFrame */
@@ -86,7 +87,7 @@ var Modal = (function(window, document) {
     body.classList.add('no-scroll');
     setTimeout(function() {
       overlay.classList.add('is-active');
-      content.classList.add('is-active');
+      frame.classList.add('is-active');
     }, 0);
 
     /* Add layer to the stack */
@@ -99,13 +100,14 @@ var Modal = (function(window, document) {
   var close = function(runCallback) {
     var layer = layers.pop(),
       overlay = layer.overlay,
+      frame = layer.frame,
       content = layer.content;
 
     /* Stop any existing XHR requests */
     request.abort();
 
     /* Make overlay and content invisible */
-    content.classList.remove('is-active');
+    frame.classList.remove('is-active');
     overlay.classList.remove('is-active');
     body.classList.remove('no-scroll');
 
@@ -133,12 +135,18 @@ var Modal = (function(window, document) {
   var createLayer = function(options) {
     var element = document.createElement('div'),
       overlay = document.createElement('div'),
-      content = (options.iframe) ? document.createElement('iframe') : document.createElement('div');
+      frame = document.createElement('div'),
+      content = (options.iframe) ? document.createElement('iframe') : document.createElement('div'),
+      cancel = document.createElement('a');
 
     /* Add classes to each element */
     element.classList.add('modal-layer');
-    overlay.classList.add('modal-overlay');
+    overlay.classList.add('modal-overlay', 'modal-cancel');
+    frame.classList.add('modal-frame');
     content.classList.add('modal-content');
+    cancel.classList.add('modal-cancel');
+
+    cancel.setAttribute('href', '#cancel');
 
     /* Calculate the z-index for the layer */
     if (typeof zIndexOffset === 'undefined') {
@@ -147,17 +155,22 @@ var Modal = (function(window, document) {
       body.removeChild(element);
     }
     overlay.style.zIndex = zIndexOffset + layers.length;
-    content.style.zIndex = (zIndexOffset + 1) + layers.length;
+    frame.style.zIndex = (zIndexOffset + 1) + layers.length;
 
-    content.style.width = options.width;
-    content.style.height = options.height;
+    /* Apply width/height dimensions to the frame */
+    frame.style.width = options.width;
+    frame.style.height = options.height;
 
+    /* Construct the layer element */
     element.appendChild(overlay);
-    element.appendChild(content);
+    element.appendChild(frame);
+    frame.appendChild(content);
+    frame.appendChild(cancel);
 
     return {
       element: element,
       overlay: overlay,
+      frame: frame,
       content: content,
       options: options
     };
