@@ -98,6 +98,9 @@ var Modal = (function(window, document) {
 
   /* Close the modal */
   var close = function(runCallback) {
+    /* Return immediately if there are no layers (a user may click the overlay/cancel while it's still transitioning out) */
+    if (layers.length === 0) return;
+
     var layer = layers.pop(),
       overlay = layer.overlay,
       frame = layer.frame,
