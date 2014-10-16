@@ -19,7 +19,6 @@ var Modal = (function(window, document) {
       body.addEventListener('click', function(e) {
         if (e.target && e.target.classList.contains('modal-cancel')) {
           e.preventDefault();
-          e.target.classList.remove('modal-cancel');
           cancel();
         }
       });
