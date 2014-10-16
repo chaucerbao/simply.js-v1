@@ -5,6 +5,7 @@ var Modal = (function(window, document) {
     body = document.body,
     request = new XMLHttpRequest(),
     isInitialized = false,
+    isTransitioning = false,
     zIndexOffset;
 
   var init = function() {
@@ -18,6 +19,7 @@ var Modal = (function(window, document) {
       body.addEventListener('click', function(e) {
         if (e.target && e.target.classList.contains('modal-cancel')) {
           e.preventDefault();
+          e.target.classList.remove('modal-cancel');
           cancel();
         }
       });
@@ -102,7 +104,7 @@ var Modal = (function(window, document) {
   /* Close the modal */
   var close = function(runCallback) {
     /* Return immediately if there are no layers (a user may click the overlay/cancel while it's still transitioning out) */
-    if (layers.length === 0) { return; }
+    if (isTransitioning || layers.length === 0) { return; }
 
     var layer = layers.pop(),
       overlay = layer.overlay,
@@ -131,7 +133,11 @@ var Modal = (function(window, document) {
     if (window.getComputedStyle(overlay).getPropertyValue('transition-duration') === '0s') {
       cleanUp(runCallback);
     } else {
-      overlay.addEventListener('transitionend', function() { cleanUp(runCallback); });
+      isTransitioning = true;
+      overlay.addEventListener('transitionend', function() {
+        isTransitioning = false;
+        cleanUp(runCallback);
+      });
     }
 
     return layer;
