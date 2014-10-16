@@ -129,7 +129,7 @@ var Modal = (function(window, document) {
 
       body.removeChild(layer.element);
     };
-    if (window.getComputedStyle(overlay).getPropertyValue('transition-duration') === '0s') {
+    if (computed(overlay, 'transition-duration') === '0s') {
       cleanUp(runCallback);
     } else {
       isTransitioning = true;
@@ -167,7 +167,7 @@ var Modal = (function(window, document) {
     /* Calculate the z-index for the layer */
     if (typeof zIndexOffset === 'undefined') {
       body.appendChild(element);
-      zIndexOffset = parseInt(window.getComputedStyle(element).getPropertyValue('z-index')) || 100;
+      zIndexOffset = parseInt(computed(element, 'z-index')) || 100;
       body.removeChild(element);
     }
     overlay.style.zIndex = zIndexOffset + layers.length;
@@ -190,6 +190,11 @@ var Modal = (function(window, document) {
       content: content,
       options: options
     };
+  };
+
+  /* Get the computed value for a style property */
+  var computed = function(element, property) {
+    return window.getComputedStyle(element).getPropertyValue(property);
   };
 
   /* Extend an object */
