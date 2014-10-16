@@ -1,0 +1,23 @@
+/* Customize these rules to match your design */
+.modal-layer {
+  z-index: 100;
+}
+.modal-overlay {
+  background-color: rgba(0, 0, 0, .7);
+}
+.modal-frame {
+  max-width: 80%; max-height: 80%;
+}
+.modal-overlay, .modal-frame {
+  opacity: 0;
+  transition: opacity .2s;
+}
+.modal-overlay.is-active, .modal-frame.is-active {
+  opacity: 1;
+}
+a.modal-cancel {
+  position: absolute; right: 0; bottom: -1.4rem;
+}
+a.modal-cancel::before {
+  content: "Cancel";
+}
