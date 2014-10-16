@@ -118,7 +118,7 @@ var Modal = (function(window, document) {
     body.classList.remove('no-scroll');
 
     /* Remove the modal layer from the DOM */
-    overlay.addEventListener('transitionend', function() {
+    var cleanUp = function(runCallback) {
       if (typeof runCallback === 'undefined') { runCallback = true; }
       if (runCallback) {
         layer.options.onClose(content);
@@ -127,7 +127,12 @@ var Modal = (function(window, document) {
       }
 
       body.removeChild(layer.element);
-    });
+    };
+    if (window.getComputedStyle(overlay).getPropertyValue('transition-duration') === '0s') {
+      cleanUp(runCallback);
+    } else {
+      overlay.addEventListener('transitionend', function() { cleanUp(runCallback); });
+    }
 
     return layer;
   };
