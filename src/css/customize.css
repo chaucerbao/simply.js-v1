@@ -9,11 +9,11 @@
 .modal-overlay.is-active, .modal-frame.is-active {
   opacity: 1;
 }
+.modal-frame {
+  transition: opacity .2s, width .6s, height .6s;
+}
 .modal-overlay {
   background-color: rgba(0, 0, 0, .7);
-}
-.modal-frame {
-  max-width: 80%; max-height: 80%;
 }
 a.modal-cancel {
   position: absolute; right: 0; bottom: -1.4rem;

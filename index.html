@@ -53,6 +53,7 @@
         <p>Elit laborum impedit debitis ipsam recusandae. Esse dolor enim sit ab distinctio mollitia asperiores. Sit tempore asperiores harum eos architecto quam ducimus laudantium ducimus impedit commodi? Praesentium maxime maxime vitae.</p>
         <p>Sit eum dicta cum sint obcaecati quo? Blanditiis tempore illo velit cum tenetur. Nulla voluptatem placeat voluptates culpa nobis rerum sapiente provident expedita labore possimus expedita officia et neque nisi.</p>
         <p>Amet vel incidunt pariatur expedita exercitationem? Quae esse vero tempora iste alias officiis dignissimos nulla. Nam a quod id totam hic! Quisquam veritatis beatae praesentium adipisci sequi facere. Ullam vitae?</p>
+        <a href="javascript:modal.resize('60%', '60%');">Resize</a>
         <a href="javascript:modal.close();">Close</a>
       </section>
 
@@ -65,6 +66,7 @@
         <p>Dolor corrupti accusantium ipsum consectetur officia ratione? Nesciunt aut quos adipisci dignissimos neque quaerat cupiditate eveniet. Repellat eum perspiciatis ad maiores ducimus quos ipsa aliquid necessitatibus maxime eveniet. Ipsam error!</p>
         <p>Sit vel explicabo quae quos obcaecati distinctio totam voluptate voluptatem, tempora accusamus dolore a delectus minus sint? Dolorum cupiditate quisquam rem praesentium labore! Atque tenetur nobis magnam doloribus voluptas sint?</p>
         <p>Adipisicing quod libero doloremque neque impedit illum. Saepe accusamus commodi eum repellendus et, aut! Nisi itaque animi amet facere vel fugiat? Impedit tempora magnam cumque cumque eos tempore. Totam assumenda!</p>
+        <a href="javascript:parent.modal.resize('60%', '60%');">Resize</a>
         <a href="javascript:parent.modal.close();">Close</a>
       </section>
     </main>
@@ -92,8 +94,8 @@
       l1.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s1'); });
       l2.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { iframe: true }); });
 
-      l3.addEventListener('click', function(e) { e.preventDefault(); modal.open('<h1>This is literal HTML</h1>'); });
-      l4.addEventListener('click', function(e) { e.preventDefault(); modal.open('<h1>This is literal HTML</h1>', { iframe: true }); });
+      l3.addEventListener('click', function(e) { e.preventDefault(); modal.open('<div style="width: 500px; height: 400px;"><h1>This is literal HTML</h1></div>'); });
+      l4.addEventListener('click', function(e) { e.preventDefault(); modal.open('<div style="width: 500px; height: 400px;"><h1>This is literal HTML</h1></div>', { iframe: true }); });
 
       l5.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html'); });
       l6.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { iframe: true }); });

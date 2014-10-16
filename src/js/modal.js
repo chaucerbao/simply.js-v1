@@ -35,8 +35,8 @@ var Modal = (function(window, document) {
     if (typeof options !== 'object') { options = {}; }
     options = extend({
       iframe: false,
-      height: '100%',
-      width: '100%',
+      height: 'auto',
+      width: 'auto',
       onLoad: function() {},
       onClose: function() {},
       onCancel: function() {}
@@ -46,6 +46,15 @@ var Modal = (function(window, document) {
       overlay = layer.overlay,
       frame = layer.frame,
       content = layer.content;
+
+    /* Resize the frame after content is loaded if either dimension is set to 'auto' */
+    if (options.width === 'auto' || options.height === 'auto') {
+      var onLoad = options.onLoad;
+      options.onLoad = function(content) {
+        resize(options.width, options.height, layer);
+        onLoad(content);
+      };
+    }
 
     /* Need to append to DOM here, otherwise we can't access the 'contentWindow' of an iFrame */
     body.appendChild(layer.element);
@@ -173,15 +182,20 @@ var Modal = (function(window, document) {
     overlay.style.zIndex = zIndexOffset + layers.length;
     frame.style.zIndex = (zIndexOffset + 1) + layers.length;
 
-    /* Apply width/height dimensions to the frame */
-    frame.style.width = options.width;
-    frame.style.height = options.height;
-
     /* Construct the layer element */
     element.appendChild(overlay);
     element.appendChild(frame);
     frame.appendChild(content);
     frame.appendChild(cancel);
+
+    /* Set the initial frame dimensions */
+    if (options.iframe) {
+      /* The iFrame dimensions of 300x150 are CSS2 standard dimensions for 'auto' width/height */
+      if (options.width === 'auto') { frame.style.width = '300px'; }
+      if (options.height === 'auto') { frame.style.height = '150px'; }
+    }
+    if (options.width !== 'auto') { frame.style.width = options.width; }
+    if (options.height !== 'auto') { frame.style.height = options.height; }
 
     return {
       element: element,
@@ -189,6 +203,32 @@ var Modal = (function(window, document) {
       frame: frame,
       content: content,
       options: options
+    };
+  };
+
+  /* Resize a modal */
+  var resize = function(width, height, layer) {
+    if (typeof layer === 'undefined') {
+      if (layers.length === 0) { return; }
+      layer = layers[layers.length - 1];
+    }
+
+    var options = layer.options,
+      content = (options.iframe) ? layer.content.contentWindow.document.body : layer.content,
+      frame = layer.frame;
+
+    /* If width/height is set to 'auto', find the dimensions of the contents */
+    content.classList.add('dimensions');
+    if (width === 'auto') { width = (options.iframe) ? content.scrollWidth + 'px' : computed(content, 'width'); }
+    if (height === 'auto') { height = (options.iframe) ? content.scrollHeight + 'px' : computed(content, 'height'); }
+    content.classList.remove('dimensions');
+
+    frame.style.width = width;
+    frame.style.height = height;
+
+    return {
+      width: width,
+      height: height
     };
   };
 
@@ -215,7 +255,8 @@ var Modal = (function(window, document) {
   return {
     open: open,
     close: close,
-    cancel: cancel
+    cancel: cancel,
+    resize: resize
   };
 })(window, document);
 
