@@ -3,111 +3,125 @@
   <head>
     <title>Modal.js</title>
     <link rel="stylesheet" href="src/css/modal.css">
-    <link rel="stylesheet" href="src/css/customize.css">
     <style>
+      /* Style for this page so it doesn't look too ugly, you can ignore this */
+      body {
+        color: #111;
+      }
+      header h1 {
+        border-bottom: solid #111 1px;
+        margin-top: 0;
+      }
       a {
         color: #0074d9;
-      }
-      #add-modal {
-        background-color: #0074d9;
-        border-radius: 4px;
-        color: #fff;
-        padding: .5rem 1rem;
-        position: fixed; right: .5rem; top: .5rem; z-index: 5000;
         text-decoration: none;
       }
-      #s1, #s2 {
-        display: none;
+      a:hover {
+        text-decoration: underline;
+      }
+      #modal-add {
+        background-color: #0074d9;
+        border-radius: 4px;
+        box-shadow: 2px 2px 2px #999;
+        color: #fff;
+        padding: .5rem 1rem;
+        position: fixed; right: .5rem; top: .4rem; z-index: 5000;
+      }
+      #modal-add:hover {
+        background-color: #1285ea;
+        text-decoration: none;
       }
     </style>
   </head>
   <body>
     <header>
-      <nav>
-        <ol>
-          <li><a id="l1" href="#">Element ID inline</a></li>
-          <li><a id="l2" href="#">Element ID into an iFrame</a></li>
-
-          <li><a id="l3" href="#">Literal HTML inline</a></li>
-          <li><a id="l4" href="#">Literal HTML into an iFrame</a></li>
-
-          <li><a id="l5" href="#">URL inline</a></li>
-          <li><a id="l6" href="#">URL into an iFrame</a></li>
-
-          <li><a id="l7" href="#">Element ID inline with onLoad callback</a></li>
-          <li><a id="l8" href="#">Element ID into an iFrame with onLoad callback</a></li>
-
-          <li><a id="l9" href="#">URL inline with onLoad callback</a></li>
-          <li><a id="l10" href="#">URL into an iFrame with onLoad callback</a></li>
-
-          <li><a id="l11" href="#">Close and cancel callbacks</a></li>
-        </ol>
-      </nav>
+      <h1>Modal.js</h1>
     </header>
 
     <main>
-      <a id="add-modal" href="#">Open a new modal</a>
+      <h1>Functionality</h1>
+      <ol>
+        <li><a class="modal-open" href="#">Element ID inline</a></li>
+        <li><a class="modal-open" href="#">Element ID into an iFrame</a></li>
 
-      <section id="s1">
-        <h2>Dolor corporis reprehenderit</h2>
-        <p>Elit laborum impedit debitis ipsam recusandae. Esse dolor enim sit ab distinctio mollitia asperiores. Sit tempore asperiores harum eos architecto quam ducimus laudantium ducimus impedit commodi? Praesentium maxime maxime vitae.</p>
-        <p>Sit eum dicta cum sint obcaecati quo? Blanditiis tempore illo velit cum tenetur. Nulla voluptatem placeat voluptates culpa nobis rerum sapiente provident expedita labore possimus expedita officia et neque nisi.</p>
-        <p>Amet vel incidunt pariatur expedita exercitationem? Quae esse vero tempora iste alias officiis dignissimos nulla. Nam a quod id totam hic! Quisquam veritatis beatae praesentium adipisci sequi facere. Ullam vitae?</p>
-        <a href="javascript:modal.resize('60%', '60%');">Resize</a>
-        <a href="javascript:modal.close();">Close</a>
-      </section>
+        <li><a class="modal-open" href="#">Literal HTML inline</a></li>
+        <li><a class="modal-open" href="#">Literal HTML into an iFrame</a></li>
 
-      <section id="s2">
-        <h2>Adipisicing eligendi nisi quasi</h2>
+        <li><a class="modal-open" href="#">URL inline</a></li>
+        <li><a class="modal-open" href="#">URL into an iFrame</a></li>
+
+        <li><a class="modal-open" href="#">URL inline with onLoad callback</a></li>
+        <li><a class="modal-open" href="#">URL into an iFrame with onLoad callback</a></li>
+
+        <li><a class="modal-open" href="#">Close/cancel callbacks with inline content</a></li>
+        <li><a class="modal-open" href="#">Close/cancel callbacks with iFrame content</a></li>
+      </ol>
+
+      <a id="modal-add" href="#">Open a new modal</a>
+
+      <template id="template-short">
+        <h1>Short content</h1>
+        <p>Dolor quam facere recusandae ea dolore omnis suscipit est. Numquam culpa corporis illo eius beatae!</p>
+        <a href="javascript:parent.modal.resize('50%', '50%');">Resize</a>
+        <a href="javascript:parent.modal.close();">Close</a>
+      </template>
+
+      <template id="template-long">
+        <h1>Long content</h1>
         <p>Lorem dolor libero dolorum impedit maiores quidem sunt! Corporis ducimus quisquam maiores omnis in, vitae iusto consectetur. Nisi excepturi sequi repellat ab porro saepe molestias inventore dolor animi explicabo quis.</p>
         <p>Ipsum fugit amet tempora ipsam libero. Explicabo natus porro debitis magni in harum? Soluta placeat nemo quidem reiciendis eos vero nostrum voluptas sunt blanditiis commodi! Nam dolores pariatur dolores eos.</p>
         <p>Dolor impedit assumenda obcaecati officiis aliquam. Blanditiis unde id beatae necessitatibus eveniet repellat autem nostrum incidunt dolorum corrupti excepturi. Harum porro praesentium nemo quas doloribus. Qui harum provident sed sit.</p>
-        <p>Adipisicing corrupti illum ab officiis sit eius reiciendis dicta recusandae quidem laboriosam. Unde odit hic eius sequi quam eius. Iure atque laudantium voluptatum nobis repellendus a corporis. Adipisci eveniet exercitationem.</p>
-        <p>Dolor corrupti accusantium ipsum consectetur officia ratione? Nesciunt aut quos adipisci dignissimos neque quaerat cupiditate eveniet. Repellat eum perspiciatis ad maiores ducimus quos ipsa aliquid necessitatibus maxime eveniet. Ipsam error!</p>
+        <h2>Elit reprehenderit perferendis</h2>
         <p>Sit vel explicabo quae quos obcaecati distinctio totam voluptate voluptatem, tempora accusamus dolore a delectus minus sint? Dolorum cupiditate quisquam rem praesentium labore! Atque tenetur nobis magnam doloribus voluptas sint?</p>
+        <p>Elit quae provident commodi vitae voluptatibus. Voluptatibus debitis obcaecati quo ducimus nemo! Excepturi quod dolorum debitis reiciendis nobis et. Corporis aspernatur possimus exercitationem voluptatibus beatae. Veritatis veritatis blanditiis facere quis!</p>
+        <p>Adipisicing corrupti illum ab officiis sit eius reiciendis dicta recusandae quidem laboriosam. Unde odit hic eius sequi quam eius. Iure atque laudantium voluptatum nobis repellendus a corporis. Adipisci eveniet exercitationem.</p>
+        <p>Consectetur accusantium ea corporis beatae consectetur ut, voluptatibus est quia explicabo labore? Necessitatibus et minus soluta dolorum deserunt praesentium. Iure fugit sapiente impedit nam aut! Iure quae quidem natus sed.</p>
+        <h2>Sit voluptates assumenda</h2>
+        <p>Lorem assumenda suscipit eum excepturi sapiente. Necessitatibus a veritatis explicabo minus voluptatibus illo. Ullam enim rem soluta harum mollitia amet libero. Sit obcaecati debitis accusantium molestias velit. Est reiciendis dolorem!</p>
+        <p>Dolor corrupti accusantium ipsum consectetur officia ratione? Nesciunt aut quos adipisci dignissimos neque quaerat cupiditate eveniet. Repellat eum perspiciatis ad maiores ducimus quos ipsa aliquid necessitatibus maxime eveniet. Ipsam error!</p>
         <p>Adipisicing quod libero doloremque neque impedit illum. Saepe accusamus commodi eum repellendus et, aut! Nisi itaque animi amet facere vel fugiat? Impedit tempora magnam cumque cumque eos tempore. Totam assumenda!</p>
-        <a href="javascript:parent.modal.resize('60%', '60%');">Resize</a>
+        <h2>Consectetur porro dignissimos</h2>
+        <p>Sit ratione aliquid corrupti rerum provident. Deleniti obcaecati sed dolor exercitationem voluptas eveniet optio voluptatem quisquam ab, inventore! Odit dolorem dolor quis laborum quisquam quod neque? Ullam animi dolor nisi.</p>
+        <p>Elit beatae dolor nisi architecto modi velit at! Nobis culpa recusandae maiores fuga odit beatae cupiditate! Fugiat totam explicabo beatae eligendi exercitationem. Odit asperiores odit iste hic laboriosam? Illum quam.</p>
+        <p>Lorem eum porro suscipit explicabo officia earum in eaque quia, in deleniti sint dolores pariatur temporibus repellendus similique numquam! Atque necessitatibus quod ut dicta dolorum ipsa sit. Optio tempora qui!</p>
+        <a href="javascript:parent.modal.resize('75%', '75%');">Resize</a>
         <a href="javascript:parent.modal.close();">Close</a>
-      </section>
+      </template>
     </main>
 
     <script src="src/js/modal.js"></script>
     <script>
-      addModal = document.getElementById('add-modal');
-      addModal.addEventListener('click', function(e) {
-        e.preventDefault();
-        modal.open('#s2', { width: (Math.random() * 60 + 20) + '%', height: (Math.random() * 60 + 20) + '%' });
+      /* Shortcut function to bind a 'click' event to opening a modal */
+      function openModal(element, target, options) {
+        element.addEventListener('click', function(e) {
+          e.preventDefault();
+          modal.open(target, options);
+        });
+      }
+
+      /* Open up an additional modal */
+      openModal(document.getElementById('modal-add'), '#template-long', {
+        width: (Math.random() * 60 + 20) + '%',
+        height: (Math.random() * 60 + 20) + '%',
       });
 
-      l1 = document.getElementById('l1');
-      l2 = document.getElementById('l2');
-      l3 = document.getElementById('l3');
-      l4 = document.getElementById('l4');
-      l5 = document.getElementById('l5');
-      l6 = document.getElementById('l6');
-      l7 = document.getElementById('l7');
-      l8 = document.getElementById('l8');
-      l9 = document.getElementById('l9');
-      l10 = document.getElementById('l10');
-      l11 = document.getElementById('l11');
+      var links = document.getElementsByClassName('modal-open');
 
-      l1.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s1'); });
-      l2.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { iframe: true }); });
+      openModal(links[0], '#template-long');
+      openModal(links[1], '#template-long', { iframe: true });
 
-      l3.addEventListener('click', function(e) { e.preventDefault(); modal.open('<div style="width: 500px; height: 400px;"><h1>This is literal HTML</h1></div>'); });
-      l4.addEventListener('click', function(e) { e.preventDefault(); modal.open('<div style="width: 500px; height: 400px;"><h1>This is literal HTML</h1></div>', { iframe: true }); });
+      openModal(links[2], '<div style="width: 500px; height: 400px;">Literal HTML 500x400 (inline)</div>');
+      openModal(links[3], '<div style="width: 500px; height: 400px;">Literal HTML 500x400 (iFrame)</div>', { iframe: true });
 
-      l5.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html'); });
-      l6.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { iframe: true }); });
+      openModal(links[4], 'file.html');
+      openModal(links[5], 'file.html', { iframe: true });
 
-      l7.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s1', { onLoad: function(c) { console.log(c); } }); });
-      l8.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s2', { iframe: true, onLoad: function(c) { console.log(c); } }); });
+      /* Callbacks */
+      openModal(links[6], 'file.html', { onLoad: function(c) { console.log(c); } });
+      openModal(links[7], 'file.html', { iframe: true, onLoad: function(c) { console.log(c); } });
 
-      l9.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { onLoad: function(c) { console.log(c); } }); });
-      l10.addEventListener('click', function(e) { e.preventDefault(); modal.open('file.html', { iframe: true, onLoad: function(c) { console.log(c); } }); });
-
-      l11.addEventListener('click', function(e) { e.preventDefault(); modal.open('#s1', { onClose: function(c) { console.log('You CLOSED me.'); }, onCancel: function(c) { console.log('You CANCELED me.'); } }); });
-
+      openModal(links[8], '#template-short', { onClose: function(c) { console.log('Close (inline)'); }, onCancel: function(c) { console.log('Cancel (inline)'); } });
+      openModal(links[9], '#template-short', { iframe: true, onClose: function(c) { console.log('Close (iFrame)'); }, onCancel: function(c) { console.log('Cancel (iFrame)'); } });
     </script>
   </body>
 </html>
