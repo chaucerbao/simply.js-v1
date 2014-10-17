@@ -1,5 +1,5 @@
 # Modal.js
-A JavaScript modal library with just a few options.
+A JavaScript modal library for developers. It handles the modal and leaves the styling up to you.
 
 ## Features
 * Style the modal and/or add animations with CSS3
@@ -15,6 +15,7 @@ Creates a new modal, where `target` can be a URL, an element ID, or literal HTML
 ```javascript
 /* Example */
 modal.open('#my-dom-element', {
+  class: 'my-class',
   iframe: true,
   width: '80%',
   height: '80%',
@@ -28,6 +29,7 @@ There are a few options you can use to customize the modal.
 ```javascript
 // Default options
 options = {
+  class: '',
   iframe: false,
   height: 'auto',
   width: 'auto',
