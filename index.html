@@ -21,7 +21,7 @@
       }
       .style-1 .modal-frame {
         top: -10rem;
-        max-width: 50%; max-height: 50%;
+        max-width: 60%; max-height: 60%;
         transition: opacity .4s, width .5s, height .5s, top .4s;
       }
       .style-1 .modal-content {
@@ -90,7 +90,7 @@
         background-color: rgba(0, 64, 96, .7);
       }
       .style-3 .modal-frame {
-        max-width: 70%; max-height: 70%;
+        max-width: 90%; max-height: 90%;
         transition: opacity .2s, width .5s, height .5s, transform .5s;
         transform: perspective(100rem) rotateY(60deg);
       }
@@ -167,7 +167,7 @@
       <template id="template-short">
         <h1>Short content</h1>
         <p>Dolor quam facere recusandae ea dolore omnis suscipit est. Numquam culpa corporis illo eius beatae!</p>
-        <a href="javascript:parent.modal.resize('50%', '50%');">Resize</a>
+        <a href="javascript:parent.modal.resize('40%', '40%');">Resize</a>
         <a href="javascript:parent.modal.close();">Close</a>
       </template>
 
@@ -189,7 +189,7 @@
         <p>Sit ratione aliquid corrupti rerum provident. Deleniti obcaecati sed dolor exercitationem voluptas eveniet optio voluptatem quisquam ab, inventore! Odit dolorem dolor quis laborum quisquam quod neque? Ullam animi dolor nisi.</p>
         <p>Elit beatae dolor nisi architecto modi velit at! Nobis culpa recusandae maiores fuga odit beatae cupiditate! Fugiat totam explicabo beatae eligendi exercitationem. Odit asperiores odit iste hic laboriosam? Illum quam.</p>
         <p>Lorem eum porro suscipit explicabo officia earum in eaque quia, in deleniti sint dolores pariatur temporibus repellendus similique numquam! Atque necessitatibus quod ut dicta dolorum ipsa sit. Optio tempora qui!</p>
-        <a href="javascript:parent.modal.resize('75%', '75%');">Resize</a>
+        <a href="javascript:parent.modal.resize('50%', '50%');">Resize</a>
         <a href="javascript:parent.modal.close();">Close</a>
       </template>
     </main>
@@ -205,9 +205,14 @@
       }
 
       /* Open up an additional modal */
-      openModal(document.getElementById('modal-add'), '#template-long', {
-        width: (Math.random() * 60 + 20) + '%',
-        height: (Math.random() * 60 + 20) + '%',
+      document.getElementById('modal-add').addEventListener('click', function(e) {
+        e.preventDefault();
+        modal.open('#template-long', {
+          class: 'style-' + Math.ceil(Math.random() * 3),
+          iframe: (Math.random() > .5) ? true : false,
+          width: (Math.random() * 60 + 20) + '%',
+          height: (Math.random() * 60 + 20) + '%',
+        });
       });
 
       var links = document.getElementsByClassName('modal-open');
