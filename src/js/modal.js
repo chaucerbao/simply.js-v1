@@ -34,6 +34,7 @@ var Modal = (function(window, document) {
     /* Merge the options argument with defaults */
     if (typeof options !== 'object') { options = {}; }
     options = extend({
+      class: '',
       iframe: false,
       height: 'auto',
       width: 'auto',
@@ -170,6 +171,7 @@ var Modal = (function(window, document) {
     frame.classList.add('modal-frame');
     content.classList.add('modal-content');
     cancel.classList.add('modal-cancel');
+    if (options.class.length) { element.classList.add(options.class); }
 
     cancel.setAttribute('href', '#cancel');
 

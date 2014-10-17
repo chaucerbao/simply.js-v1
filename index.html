@@ -4,6 +4,104 @@
     <title>Modal.js</title>
     <link rel="stylesheet" href="src/css/modal.css">
     <style>
+      /* Style 1 */
+      .style-1 * {
+        box-sizing: border-box;
+      }
+      .style-1 .modal-overlay, .style-1 .modal-frame {
+        opacity: 0;
+        transition: opacity .4s;
+      }
+      .style-1 .modal-overlay.is-active, .style-1 .modal-frame.is-active {
+        top: 0;
+        opacity: 1;
+      }
+      .style-1 .modal-overlay {
+        background-color: rgba(0, 0, 0, .7);
+      }
+      .style-1 .modal-frame {
+        top: -10rem;
+        max-width: 50%; max-height: 50%;
+        transition: opacity .4s, width .5s, height .5s, top .4s;
+      }
+      .style-1 .modal-content {
+        padding: 1rem;
+      }
+      .style-1 a.modal-cancel {
+        color: #fff;
+        position: absolute; right: 0; bottom: -1.4rem;
+      }
+      .style-1 a.modal-cancel::before {
+        content: "Cancel";
+      }
+
+      /* Style 2 */
+      .style-2 * {
+        box-sizing: border-box;
+      }
+      .style-2 .modal-overlay, .style-2 .modal-frame {
+        opacity: 0;
+        transition: opacity .2s;
+      }
+      .style-2 .modal-overlay.is-active, .style-2 .modal-frame.is-active {
+        opacity: 1;
+      }
+      .style-2 .modal-overlay {
+        background-color: rgba(0, 0, 0, .7);
+      }
+      .style-2 .modal-frame {
+        max-width: 80%; max-height: 80%;
+        transition: opacity .2s, width .5s, height .5s;
+      }
+      .style-2 .modal-content {
+        border-radius: .5rem;
+        box-shadow: .2rem .2rem .4rem rgba(0, 0, 0, .3);
+        padding: 1rem;
+      }
+      .style-2 a.modal-cancel {
+        background-color: #111;
+        border: solid #fff .2rem;
+        border-radius: 50%;
+        color: #fff;
+        position: absolute; right: -1rem; top: -1rem;
+        width: 2rem; height: 2rem; line-height: 1.8rem;
+        text-align: center;
+      }
+      .style-2 a.modal-cancel:hover {
+        text-decoration: none;
+      }
+      .style-2 a.modal-cancel::before {
+        color: #ff4136;
+        content: "X";
+      }
+
+      /* Style 3 */
+      .style-3 * {
+        box-sizing: border-box;
+      }
+      .style-3 .modal-overlay, .style-3 .modal-frame {
+        opacity: 0;
+        transition: opacity .2s;
+      }
+      .style-3 .modal-overlay.is-active, .style-3 .modal-frame.is-active {
+        opacity: 1;
+      }
+      .style-3 .modal-overlay {
+        background-color: rgba(0, 64, 96, .7);
+      }
+      .style-3 .modal-frame {
+        max-width: 70%; max-height: 70%;
+        transition: opacity .2s, width .5s, height .5s, transform .5s;
+        transform: perspective(100rem) rotateY(60deg);
+      }
+      .style-3 .modal-frame.is-active {
+        transform: perspective(100rem) rotateY(0);
+      }
+      .style-3 .modal-content {
+        border-radius: .2rem;
+        padding: 1rem;
+      }
+
       /* Style for this page so it doesn't look too ugly, you can ignore this */
       body {
         color: #111;
@@ -22,7 +120,7 @@
       #modal-add {
         background-color: #0074d9;
         border-radius: 4px;
-        box-shadow: 2px 2px 2px #999;
+        box-shadow: 2px 2px 2px rgba(0, 0, 0, .5);
         color: #fff;
         padding: .5rem 1rem;
         position: fixed; right: .5rem; top: .4rem; z-index: 5000;
@@ -55,6 +153,13 @@
 
         <li><a class="modal-open" href="#">Close/cancel callbacks with inline content</a></li>
         <li><a class="modal-open" href="#">Close/cancel callbacks with iFrame content</a></li>
+      </ol>
+
+      <h1>Example styles</h1>
+      <ol>
+        <li><a class="modal-open" href="#">Style 1</a></li>
+        <li><a class="modal-open" href="#">Style 2</a></li>
+        <li><a class="modal-open" href="#">Style 3</a></li>
       </ol>
 
       <a id="modal-add" href="#">Open a new modal</a>
@@ -122,6 +227,11 @@
 
       openModal(links[8], '#template-short', { onClose: function(c) { console.log('Close (inline)'); }, onCancel: function(c) { console.log('Cancel (inline)'); } });
       openModal(links[9], '#template-short', { iframe: true, onClose: function(c) { console.log('Close (iFrame)'); }, onCancel: function(c) { console.log('Cancel (iFrame)'); } });
+
+      /* Styles */
+      openModal(links[10], '#template-long', { class: 'style-1' });
+      openModal(links[11], '#template-long', { class: 'style-2' });
+      openModal(links[12], '#template-long', { class: 'style-3' });
     </script>
   </body>
 </html>
