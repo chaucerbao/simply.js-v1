@@ -10,7 +10,7 @@
       }
       .style-1 .modal-overlay, .style-1 .modal-frame {
         opacity: 0;
-        transition: opacity .4s;
+        transition: opacity .4s; -webkit-transition: opacity .4s;
       }
       .style-1 .modal-overlay.is-active, .style-1 .modal-frame.is-active {
         top: 0;
@@ -20,9 +20,9 @@
         background-color: rgba(0, 0, 0, .7);
       }
       .style-1 .modal-frame {
-        top: -10rem;
-        max-width: 60%; max-height: 60%;
-        transition: opacity .4s, width .5s, height .5s, top .4s;
+        top: -15rem;
+        max-width: 80%; max-height: 80%;
+        transition: opacity .4s, width .5s, height .5s, top .4s; -webkit-transition: opacity .4s, width .5s, height .5s, top .4s;
       }
       .style-1 .modal-content {
         padding: 1rem;
@@ -41,7 +41,7 @@
       }
       .style-2 .modal-overlay, .style-2 .modal-frame {
         opacity: 0;
-        transition: opacity .2s;
+        transition: opacity .2s; -webkit-transition: opacity .2s;
       }
       .style-2 .modal-overlay.is-active, .style-2 .modal-frame.is-active {
         opacity: 1;
@@ -51,7 +51,7 @@
       }
       .style-2 .modal-frame {
         max-width: 80%; max-height: 80%;
-        transition: opacity .2s, width .5s, height .5s;
+        transition: opacity .2s, width .5s, height .5s; -webkit-transition: opacity .2s, width .5s, height .5s;
       }
       .style-2 .modal-content {
         border-radius: .5rem;
@@ -81,7 +81,7 @@
       }
       .style-3 .modal-overlay, .style-3 .modal-frame {
         opacity: 0;
-        transition: opacity .2s;
+        transition: opacity .2s; -webkit-transition: opacity .2s;
       }
       .style-3 .modal-overlay.is-active, .style-3 .modal-frame.is-active {
         opacity: 1;
@@ -90,12 +90,13 @@
         background-color: rgba(0, 64, 96, .7);
       }
       .style-3 .modal-frame {
-        max-width: 90%; max-height: 90%;
-        transition: opacity .2s, width .5s, height .5s, transform .5s;
-        transform: perspective(100rem) rotateY(60deg);
+        max-width: 80%; max-height: 80%;
+        transition: opacity .2s, width .5s, height .5s, transform .5s; -webkit-transition: opacity .2s, width .5s, height .5s, -webkit-transform .5s;
+        transform: perspective(100rem) translate3d(0, 0, 15rem); -webkit-transform: perspective(100rem) translate3d(0, 0, 15rem);
+        transform-style: preserve-3d;
       }
       .style-3 .modal-frame.is-active {
-        transform: perspective(100rem) rotateY(0);
+        transform: perspective(100rem); -webkit-transform: perspective(100rem);
       }
       .style-3 .modal-content {
         border-radius: .2rem;
@@ -248,9 +249,9 @@
       openModal(links[9], '#template-short', { iframe: true, onClose: function(c) { console.log('Close (iFrame)'); }, onCancel: function(c) { console.log('Cancel (iFrame)'); } });
 
       /* Styles */
-      openModal(links[10], '#template-long', { class: 'style-1' });
-      openModal(links[11], '#template-long', { class: 'style-2' });
-      openModal(links[12], '#template-long', { class: 'style-3' });
+      openModal(links[10], '#template-long', { class: 'style-1', width: '60%', height: '60%' });
+      openModal(links[11], '#template-long', { class: 'style-2', width: '60%', height: '60%' });
+      openModal(links[12], '#template-long', { class: 'style-3', width: '60%', height: '60%' });
     </script>
   </body>
 </html>
