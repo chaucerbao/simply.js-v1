@@ -218,10 +218,15 @@ var Modal = (function(window, document) {
       frame = layer.frame;
 
     /* If width/height is set to 'auto', find the dimensions of the contents */
-    content.classList.add('dimensions');
-    if (width === 'auto') { width = (options.iframe) ? content.scrollWidth + 'px' : computed(content, 'width'); }
-    if (height === 'auto') { height = (options.iframe) ? content.scrollHeight + 'px' : computed(content, 'height'); }
-    content.classList.remove('dimensions');
+    if (options.iframe) {
+      if (width === 'auto') { width = content.scrollWidth + 'px'; }
+      if (height === 'auto') { height = content.scrollHeight + 'px'; }
+    } else {
+      content.classList.add('dimensions');
+      if (width === 'auto') { width = computed(content, 'width'); }
+      if (height === 'auto') { height = computed(content, 'height'); }
+      content.classList.remove('dimensions');
+    }
 
     frame.style.width = width;
     frame.style.height = height;
