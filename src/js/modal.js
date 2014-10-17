@@ -16,7 +16,7 @@ var Modal = (function(window, document) {
       });
 
       /* Clicking the overlay cancels the modal */
-      body.addEventListener('click', function(e) {
+      body.addEventListener(('ontouchend' in window) ? 'touchend' : 'click', function(e) {
         if (e.target && e.target.classList.contains('modal-cancel')) {
           e.preventDefault();
           cancel();
