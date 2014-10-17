@@ -61,7 +61,7 @@ var Modal = (function(window, document) {
     body.appendChild(layer.element);
 
     /* Populate the content element */
-    if (target.match(/^([a-z]+:)?\/\//i) || target.match(/^[\w\-. ]+$/)) {
+    if (target.match(/^([a-z]+:)?\/\//i) || target.match(/^[\w\-. \/]+$/)) {
       /* Using content from a URL or file */
       if (options.iframe) {
         /* Set the iFrame source to this target */
