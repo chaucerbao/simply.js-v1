@@ -20,7 +20,7 @@ modal.open('#my-dom-element', {
   iframe: true,
   width: '80%',
   height: '80%',
-  onLoad: function(content) { console.log('Content is available.'); },
+  onLoad: function() { console.log('Content is available.'); },
   onClose: function() { console.log('Closed this modal.'); }
 });
 ```
