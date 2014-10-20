@@ -15,7 +15,7 @@ Include `modal.css` in your page and take a look at `customize.css` and/or use i
 
 **modal.open(target[, options])**
 
-Creates a new modal, where `target` can be a URL, an element ID, or literal HTML (great if you use templates).
+Creates a new modal, where `target` can be a URL, an element ID, or literal HTML (great for using with template libraries).
 
 ```javascript
 /* Example */
