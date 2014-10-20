@@ -2,7 +2,7 @@
 A JavaScript modal library for developers. It handles the modal and leaves the styling up to you.
 
 ## Features
-* No dependencies, 3.3kb minified, 1.4kb minified + gzip'd
+* No dependencies, 3.5kb minified, 1.5kb minified + gzip'd
 * Style the modal and/or add animations with CSS3
 * Stack modals on top of each other (go nuts!)
 * Load content inline or inside an iframe
