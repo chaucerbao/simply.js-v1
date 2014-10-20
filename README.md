@@ -1,17 +1,21 @@
 # Modal.js
-A JavaScript modal library for developers. It handles the modal and leaves the styling up to you.
+A JavaScript modal library for developers who need to customize their modal designs. It handles the modal, and leaves the styling up to you.
 
 ## Features
 * No dependencies, 3.5kb minified, 1.5kb minified + gzip'd
-* Style the modal and/or add animations with CSS3
+* Style the modal and add animations with CSS3
 * Stack modals on top of each other (go nuts!)
-* Load content inline or inside an iframe
-* Resize the modal to match the content width and/or height
+* Load content directly inline or use an iframe
+* Automatically resize the modal to match the content width/height
 
 ## Usage
+Include `modal.css` in your page and take a look at `customize.css` and/or use it as a template for your own designs.
+
+---
+
 **modal.open(target[, options])**
 
-Creates a new modal, where `target` can be a URL, an element ID, or literal HTML.
+Creates a new modal, where `target` can be a URL, an element ID, or literal HTML (great if you use templates).
 
 ```javascript
 /* Example */
