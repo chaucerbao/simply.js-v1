@@ -187,7 +187,15 @@ var Modal = (function(window, document) {
     /* Construct the layer element */
     element.appendChild(overlay);
     element.appendChild(frame);
-    frame.appendChild(content);
+    if (options.iframe && /iP(ad|hone|od)/.test(navigator.userAgent)) {
+      /* iOS Safari needs this extra layer to allow proper rendering and scrolling of iFrames : http://stackoverflow.com/questions/23337986/iframe-modal-scrolling-on-ipad-iphone */
+      var boundry = document.createElement('div');
+      boundry.classList.add('modal-boundry');
+      frame.appendChild(boundry);
+      boundry.appendChild(content);
+    } else {
+      frame.appendChild(content);
+    }
     frame.appendChild(cancel);
 
     /* Set the initial frame dimensions */
