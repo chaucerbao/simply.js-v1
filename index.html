@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tooltip.js</title>
+    <link rel="stylesheet" href="src/css/tooltip.css">
+    <style>
+      .tooltip, .tooltip-iframe, .tooltip-callback, .tooltip-iframe-callback {
+        border-bottom: dotted 1px black;
+        cursor: default;
+      }
+      .tooltip-content {
+        background-color: #eee;
+        border-radius: .4rem;
+        opacity: 0;
+        padding: .5rem;
+        transition: opacity .2s;
+      }
+      .tooltip-content.is-active {
+        opacity: 1;
+        z-index: 1;
+      }
+
+      /* Style for this page so it doesn't look too ugly, you can ignore this */
+      body {
+        color: #111;
+      }
+      header h1 {
+        border-bottom: solid #111 1px;
+        margin-top: 0;
+      }
+      code {
+        background-color: #ddd;
+        border: solid #ddd 1px;
+        border-radius: 4px;
+        padding: 2px;
+      }
+      h1 {
+        margin-bottom: 0;
+      }
+      template {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Tooltip.js</h1>
+    </header>
+
+    <main>
+      <h1>Functionality</h1>
+      <p>Mouse over the tooltip indicators to show the tooltip.</p>
+
+      <ul>
+        <li>Literal HTML inline <span class="tooltip" data-tooltip="<span>Sit earum accusamus minima cumque reprehenderit ullam velit. Delectus et.</span>">tooltip</span></li>
+        <li>Element ID inline <span class="tooltip" data-tooltip="#element-tooltip">tooltip</span></li>
+        <li>URL inline <span class="tooltip" data-tooltip="file.html">tooltip</span></li>
+
+        <li>Literal HTML iFrame <span class="tooltip-iframe" data-tooltip="<span>Adipisicing incidunt rerum quidem laborum eum ea distinctio quos! Recusandae!</span>">tooltip</span></li>
+        <li>Element ID iFrame <span class="tooltip-iframe" data-tooltip="#element-tooltip">tooltip</span></li>
+        <li>URL iFrame <span class="tooltip-iframe" data-tooltip="file.html">tooltip</span></li>
+
+        <li>Callbacks with inline <span class="tooltip-callback" data-tooltip="#element-tooltip">tooltip</span></li>
+        <li>Callbacks with iFrame (cached) <span class="tooltip-iframe-callback" data-tooltip="file.html">tooltip</span></li>
+      </ul>
+    </main>
+
+    <template id="element-tooltip">
+      <h1>Amet nostrum fuga</h1>
+      <p>Consectetur numquam repellendus natus doloribus eveniet qui. Sit veniam voluptatibus obcaecati nihil fuga ad praesentium.</p>
+    </template>
+
+    <script src="src/js/tooltip.js"></script>
+    <script>
+      var body = document.body,
+      tooltips = document.getElementsByClassName('tooltip'),
+      tooltipsFramed = document.getElementsByClassName('tooltip-iframe');
+
+      tooltip.bind(tooltips, {});
+      tooltip.bind(tooltipsFramed, { iframe: true });
+
+      tooltip.bind(document.getElementsByClassName('tooltip-callback'), {
+        onShow: function(c) { console.log('Open'); },
+        onHide: function(c) { console.log('Close'); }
+      });
+
+      tooltip.bind(document.getElementsByClassName('tooltip-iframe-callback'), {
+        cache: true,
+        iframe: true,
+        onShow: function(c) { console.log('Open'); },
+        onHide: function(c) { console.log('Close'); }
+      });
+    </script>
+  </body>
+</html>

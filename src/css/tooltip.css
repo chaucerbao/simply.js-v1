@@ -1,0 +1,10 @@
+/* These rules are recommended for Tooltip.js */
+.tooltip-trigger {
+  position: relative;
+}
+.tooltip-content {
+  position: absolute;
+}
+iframe.tooltip-content {
+  border: none;
+}
