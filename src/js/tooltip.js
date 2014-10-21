@@ -155,6 +155,9 @@ var Tooltip = (function(window, document) {
     options.onHide(tooltip);
 
     if (!options.cache) { trigger.removeChild(tooltip); }
+
+    /* Only run this callback once, in case of multiple transitions */
+    tooltip.removeEventListener('transitionend', removeTooltip);
   };
 
   /* Get the computed value for a style property */
