@@ -10,12 +10,18 @@ var Tooltip = (function(window, document) {
     if (!isInitialized) {
       /* Mousing over a tooltip shows its contents */
       body.addEventListener('mouseover', function(e) {
-        if (e.target && e.target.classList.contains('tooltip-trigger')) { show(e.target); }
+        if (e.target) {
+          if (e.target.classList.contains('tooltip-trigger')) { show(e.target); }
+          if (e.target.classList.contains('tooltip-content')) { show(e.target.parentNode); }
+        }
       });
 
       /* Mousing out of a tooltip hides its contents */
       body.addEventListener('mouseout', function(e) {
-        if (e.target && e.target.classList.contains('tooltip-trigger')) { hide(e.target); }
+        if (e.target) {
+          if (e.target.classList.contains('tooltip-trigger')) { hide(e.target); }
+          if (e.target.classList.contains('tooltip-content')) { hide(e.target.parentNode); }
+        }
       });
 
       isInitialized = true;
