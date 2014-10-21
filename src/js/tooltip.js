@@ -8,20 +8,25 @@ var Tooltip = (function(window, document) {
 
   var init = function() {
     if (!isInitialized) {
+      /* Search parent elements recursively for the tooltip trigger */
+      var findTrigger = function(element) {
+        if (element.classList.contains('tooltip-trigger')) { return element; }
+        if (element === document.documentElement) { return false; }
+
+        return findTrigger(element.parentNode);
+      };
+
       /* Mousing over a tooltip shows its contents */
       body.addEventListener('mouseover', function(e) {
-        if (e.target) {
-          if (e.target.classList.contains('tooltip-trigger')) { show(e.target); }
-          if (e.target.classList.contains('tooltip-content')) { show(e.target.parentNode); }
-        }
+        var trigger = findTrigger(e.target);
+        if (trigger) { show(trigger); }
       });
 
       /* Mousing out of a tooltip hides its contents */
       body.addEventListener('mouseout', function(e) {
-        if (e.target) {
-          if (e.target.classList.contains('tooltip-trigger')) { hide(e.target); }
-          if (e.target.classList.contains('tooltip-content')) { hide(e.target.parentNode); }
-        }
+        var trigger = findTrigger(e.target),
+          related = findTrigger(e.relatedTarget);
+        if (trigger && !related) { hide(trigger); }
       });
 
       isInitialized = true;
