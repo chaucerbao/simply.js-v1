@@ -10,6 +10,9 @@ var Tooltip = (function(window, document) {
     if (!isInitialized) {
       /* Search parent elements recursively for the tooltip trigger */
       var findTrigger = function(element) {
+        /* When mousing in/out of the browser window, you might hit an empty 'relatedTarget' */
+        if (!element) { return false; }
+
         if (element.classList.contains('tooltip-trigger')) { return element; }
         if (element === document.documentElement) { return false; }
 
