@@ -4,6 +4,8 @@
 }
 .tooltip-content {
   position: absolute;
+  max-width: 100vw; max-height: 100vh;
+  overflow: scroll;
 }
 .tooltip-content.dimensions {
   position: static;
