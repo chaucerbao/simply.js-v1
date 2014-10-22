@@ -4,7 +4,8 @@ var Tooltip = (function(window, document) {
   var body = document.body,
     request = new XMLHttpRequest(),
     isInitialized = false,
-    optionSets = [];
+    optionSets = [],
+    moveEvent;
 
   var init = function() {
     if (!isInitialized) {
@@ -32,6 +33,19 @@ var Tooltip = (function(window, document) {
         if (typeof trigger === 'object' && trigger !== related) { hide(trigger); }
       });
 
+      /* Moving the mouse over a trigger will update the tooltip's position */
+      var activeTooltip;
+      body.addEventListener('mousemove', function(e) {
+        var trigger = findTrigger(e.target);
+        moveEvent = e;
+        activeTooltip = (trigger) ? trigger.getElementsByClassName('tooltip-content is-active')[0] : null;
+      });
+
+      (function renderLoop() {
+        window.requestAnimationFrame(renderLoop);
+        reposition(activeTooltip);
+      })();
+
       isInitialized = true;
     }
   };
@@ -48,7 +62,7 @@ var Tooltip = (function(window, document) {
       class: '',
       cache: false,
       iframe: false,
-      position: 'top right',
+      position: 'top right cursor',
       onLoad: function() {},
       onHide: function() {}
     }, options);
@@ -75,13 +89,12 @@ var Tooltip = (function(window, document) {
       /* Reposition the tooltip after content is loaded */
       var onLoad = options.onLoad;
       options.onLoad = function(tooltip) {
-        /* Explicitly set the tooltip's dimensions to its content's size, so it doesn't resize when its position changes */
+        /* Explicitly set the tooltip's dimensions to its content's size, so it doesn't resize when the position changes */
         tooltip.classList.add('dimensions');
         tooltip.style.width = tooltip.offsetWidth + 'px';
         tooltip.style.height = tooltip.offsetHeight + 'px';
         tooltip.classList.remove('dimensions');
 
-        reposition(tooltip, options);
         onLoad(tooltip);
       };
 
@@ -177,13 +190,17 @@ var Tooltip = (function(window, document) {
     tooltip.removeEventListener('transitionend', removeTooltip);
   };
 
-  var reposition = function(tooltip, options) {
-    var positions = options.position.split(' '),
+  var reposition = function(tooltip) {
+    if (!tooltip) { return; }
+
+    var trigger = tooltip.parentNode,
+      options = optionSets[parseInt(trigger.getAttribute('data-tooltip-options')) - 1],
+      positions = options.position.split(' '),
       style = computedStyle(tooltip),
       self, parent, top, left, offset, i, length;
 
     self = tooltip.getBoundingClientRect();
-    parent = tooltip.parentNode.getBoundingClientRect();
+    parent = trigger.getBoundingClientRect();
 
     /* Center the tooltip by default, and allow the options to override */
     top = -(self.height - parent.height) / 2;
@@ -199,6 +216,18 @@ var Tooltip = (function(window, document) {
       }
     }
 
+    if (/cursor/.test(options.position)) {
+      var e = moveEvent;
+      for (i = 0, length = positions.length; i < length; i++) {
+        switch (positions[i]) {
+          case 'top': top -= window.scrollY + parent.top - e.pageY; break;
+          case 'bottom': top -= window.scrollY + parent.top + parent.height - e.pageY; break;
+          case 'left': left -= window.scrollX + parent.left - e.pageX; break;
+          case 'right': left -= window.scrollX + parent.left + parent.width - e.pageX; break;
+        }
+      }
+    }
+
     /* Keep the tooltip within the viewport, favoring the top and left to be visible (the order of these matter) */
     offset = parent.top + top + self.height - document.documentElement.clientHeight;
     if (offset > 0) { top -= offset; }
@@ -209,6 +238,7 @@ var Tooltip = (function(window, document) {
     offset = parent.left + left;
     if (offset < 0) { left -= offset; }
 
+    /* Update the tooltip position */
     tooltip.style.top = top + 'px';
     tooltip.style.left = left + 'px';
   };
