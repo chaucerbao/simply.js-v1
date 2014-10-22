@@ -48,6 +48,7 @@ var Tooltip = (function(window, document) {
       class: '',
       cache: false,
       iframe: false,
+      position: 'cursor',
       onShow: function() {},
       onHide: function() {}
     }, options);
@@ -71,6 +72,13 @@ var Tooltip = (function(window, document) {
       target;
 
     if (!content.length) {
+      /* Reposition the tooltip after content is loaded */
+      var onShow = options.onShow;
+      options.onShow = function(tooltip) {
+        reposition(tooltip, options);
+        onShow(tooltip);
+      };
+
       /* Need to append to DOM here, otherwise we can't access the 'contentWindow' of an iFrame */
       trigger.appendChild(tooltip);
 
@@ -161,6 +169,35 @@ var Tooltip = (function(window, document) {
 
     /* Only run this callback once, in case of multiple transitions */
     tooltip.removeEventListener('transitionend', removeTooltip);
+  };
+
+  var reposition = function(tooltip, options) {
+    var positions = options.position.split(' '),
+      style = window.getComputedStyle(tooltip),
+      self, parent;
+
+    /* Prevent automatic resizing of the tooltip by explicitly setting the width/height to itself */
+    tooltip.style.width = tooltip.offsetWidth + 'px';
+    tooltip.style.height = tooltip.offsetHeight + 'px';
+
+    self = { width: tooltip.offsetWidth, height: tooltip.offsetHeight };
+    parent = { width: tooltip.parentNode.offsetWidth, height: tooltip.parentNode.offsetHeight };
+
+    if (/cursor/.test(options.position)) {
+    } else {
+      /* Center the tooltip by default, and allow the options to override */
+      tooltip.style.top = -(self.height - parent.height) / 2 + 'px';
+      tooltip.style.left = -(self.width - parent.width) / 2 + 'px';
+
+      for (var i = 0, length = positions.length; i < length; i++) {
+        switch (positions[i]) {
+          case 'top': tooltip.style.top = -(self.height + parseFloat(style.marginBottom)) + 'px'; break;
+          case 'bottom': tooltip.style.top = (parent.height + parseFloat(style.marginTop)) + 'px'; break;
+          case 'left': tooltip.style.left = -(self.width + parseFloat(style.marginRight)) + 'px'; break;
+          case 'right': tooltip.style.left = (parent.width + parseFloat(style.marginLeft)) + 'px'; break;
+        }
+      }
+    }
   };
 
   /* Get the computed value for a style property */
