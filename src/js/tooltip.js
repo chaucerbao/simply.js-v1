@@ -180,7 +180,7 @@ var Tooltip = (function(window, document) {
   var reposition = function(tooltip, options) {
     var positions = options.position.split(' '),
       style = computedStyle(tooltip),
-      self, parent, top, left, i, length;
+      self, parent, top, left, offset, i, length;
 
     self = tooltip.getBoundingClientRect();
     parent = tooltip.parentNode.getBoundingClientRect();
@@ -198,6 +198,16 @@ var Tooltip = (function(window, document) {
         case 'right': left = (parent.width + parseFloat(style.marginLeft)); break;
       }
     }
+
+    /* Keep the tooltip within the viewport, favoring the top and left to be visible (the order of these matter) */
+    offset = parent.top + top + self.height - document.documentElement.clientHeight;
+    if (offset > 0) { top -= offset; }
+    offset = parent.top + top;
+    if (offset < 0) { top -= offset; }
+    offset = parent.left + left + self.width - document.documentElement.clientWidth;
+    if (offset > 0) { left -= offset; }
+    offset = parent.left + left;
+    if (offset < 0) { left -= offset; }
 
     tooltip.style.top = top + 'px';
     tooltip.style.left = left + 'px';
