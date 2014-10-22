@@ -29,7 +29,7 @@ var Tooltip = (function(window, document) {
       body.addEventListener('mouseout', function(e) {
         var trigger = findTrigger(e.target),
           related = findTrigger(e.relatedTarget);
-        if (trigger && !related || (typeof trigger === 'object' && trigger !== related)) { hide(trigger); }
+        if (typeof trigger === 'object' && trigger !== related) { hide(trigger); }
       });
 
       isInitialized = true;
