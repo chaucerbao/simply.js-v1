@@ -12,11 +12,8 @@ var Tooltip = (function(window, document) {
       /* Search parent elements recursively for the tooltip trigger */
       var findTrigger = function(element) {
         /* When mousing in/out of the browser window, you might hit an empty 'relatedTarget' */
-        if (!element) { return false; }
-
+        if (!element || element === document.documentElement) { return false; }
         if (element.classList.contains('tooltip-trigger')) { return element; }
-        if (element === document.documentElement) { return false; }
-
         return findTrigger(element.parentNode);
       };
 
@@ -81,7 +78,7 @@ var Tooltip = (function(window, document) {
   /* Show the tooltip */
   var show = function(trigger) {
     var content = trigger.getElementsByClassName('tooltip-content'),
-      options = optionSets[parseInt(trigger.getAttribute('data-tooltip-options')) - 1],
+      options = loadOptions(trigger),
       tooltip = (content.length) ? content[0] : createTooltip(options),
       target;
 
@@ -180,7 +177,7 @@ var Tooltip = (function(window, document) {
     if (typeof this !== 'undefined') { tooltip = this; }
 
     var trigger = tooltip.parentNode,
-      options = optionSets[parseInt(trigger.getAttribute('data-tooltip-options')) - 1];
+      options = loadOptions(trigger);
 
     options.onHide(tooltip);
 
@@ -191,10 +188,10 @@ var Tooltip = (function(window, document) {
   };
 
   var reposition = function(tooltip) {
-    if (!tooltip) { return; }
+    if (!tooltip || !tooltip.parentNode) { return; }
 
     var trigger = tooltip.parentNode,
-      options = optionSets[parseInt(trigger.getAttribute('data-tooltip-options')) - 1],
+      options = loadOptions(trigger),
       positions = options.position.split(' '),
       style = computedStyle(tooltip),
       self, parent, top, left, offset, i, length;
@@ -241,6 +238,11 @@ var Tooltip = (function(window, document) {
     /* Update the tooltip position */
     tooltip.style.top = top + 'px';
     tooltip.style.left = left + 'px';
+  };
+
+  /* Get the options associated with a trigger */
+  var loadOptions = function(trigger) {
+      return optionSets[parseInt(trigger.getAttribute('data-tooltip-options')) - 1];
   };
 
   /* Get the computed value for a style property */
