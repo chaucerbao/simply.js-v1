@@ -48,8 +48,8 @@ var Tooltip = (function(window, document) {
       class: '',
       cache: false,
       iframe: false,
-      position: 'cursor',
-      onShow: function() {},
+      position: 'top right',
+      onLoad: function() {},
       onHide: function() {}
     }, options);
 
@@ -73,10 +73,16 @@ var Tooltip = (function(window, document) {
 
     if (!content.length) {
       /* Reposition the tooltip after content is loaded */
-      var onShow = options.onShow;
-      options.onShow = function(tooltip) {
+      var onLoad = options.onLoad;
+      options.onLoad = function(tooltip) {
+        /* Explicitly set the tooltip's dimensions to its content's size, so it doesn't resize when its position changes */
+        tooltip.classList.add('dimensions');
+        tooltip.style.width = tooltip.offsetWidth + 'px';
+        tooltip.style.height = tooltip.offsetHeight + 'px';
+        tooltip.classList.remove('dimensions');
+
         reposition(tooltip, options);
-        onShow(tooltip);
+        onLoad(tooltip);
       };
 
       /* Need to append to DOM here, otherwise we can't access the 'contentWindow' of an iFrame */
@@ -90,14 +96,14 @@ var Tooltip = (function(window, document) {
         if (options.iframe) {
           /* Set the iFrame source to this target */
           tooltip.src = target;
-          tooltip.addEventListener('load', function() { options.onShow(tooltip); });
+          tooltip.addEventListener('load', function() { options.onLoad(tooltip); });
         } else {
           /* Get the content through AJAX */
           request.open('GET', target, true);
           request.onload = function() {
             if (request.status >= 200 && request.status < 400) {
               tooltip.innerHTML = request.responseText;
-              options.onShow(tooltip);
+              options.onLoad(tooltip);
             } else {
               tooltip.innerHTML = 'Unable to reach the content';
             }
@@ -118,7 +124,7 @@ var Tooltip = (function(window, document) {
           tooltip.innerHTML = html;
         }
 
-        options.onShow(tooltip);
+        options.onLoad(tooltip);
       }
     }
 
@@ -137,7 +143,7 @@ var Tooltip = (function(window, document) {
     if (!tooltip) { return; }
 
     /* Remove the tooltip from the DOM */
-    if (computed(tooltip, 'transition-duration') === '0s') {
+    if (computedStyle(tooltip, 'transition-duration') === '0s') {
       removeTooltip(tooltip);
     } else {
       tooltip.addEventListener('transitionend', removeTooltip);
@@ -173,36 +179,33 @@ var Tooltip = (function(window, document) {
 
   var reposition = function(tooltip, options) {
     var positions = options.position.split(' '),
-      style = window.getComputedStyle(tooltip),
-      self, parent;
+      style = computedStyle(tooltip),
+      self, parent, top, left, i, length;
 
-    /* Prevent automatic resizing of the tooltip by explicitly setting the width/height to itself */
-    tooltip.style.width = tooltip.offsetWidth + 'px';
-    tooltip.style.height = tooltip.offsetHeight + 'px';
+    self = tooltip.getBoundingClientRect();
+    parent = tooltip.parentNode.getBoundingClientRect();
 
-    self = { width: tooltip.offsetWidth, height: tooltip.offsetHeight };
-    parent = { width: tooltip.parentNode.offsetWidth, height: tooltip.parentNode.offsetHeight };
+    /* Center the tooltip by default, and allow the options to override */
+    top = -(self.height - parent.height) / 2;
+    left = -(self.width - parent.width) / 2;
 
-    if (/cursor/.test(options.position)) {
-    } else {
-      /* Center the tooltip by default, and allow the options to override */
-      tooltip.style.top = -(self.height - parent.height) / 2 + 'px';
-      tooltip.style.left = -(self.width - parent.width) / 2 + 'px';
-
-      for (var i = 0, length = positions.length; i < length; i++) {
-        switch (positions[i]) {
-          case 'top': tooltip.style.top = -(self.height + parseFloat(style.marginBottom)) + 'px'; break;
-          case 'bottom': tooltip.style.top = (parent.height + parseFloat(style.marginTop)) + 'px'; break;
-          case 'left': tooltip.style.left = -(self.width + parseFloat(style.marginRight)) + 'px'; break;
-          case 'right': tooltip.style.left = (parent.width + parseFloat(style.marginLeft)) + 'px'; break;
-        }
+    /* Update the position based on the options  */
+    for (i = 0, length = positions.length; i < length; i++) {
+      switch (positions[i]) {
+        case 'top': top = -(self.height + parseFloat(style.marginBottom)); break;
+        case 'bottom': top = (parent.height + parseFloat(style.marginTop)); break;
+        case 'left': left = -(self.width + parseFloat(style.marginRight)); break;
+        case 'right': left = (parent.width + parseFloat(style.marginLeft)); break;
       }
     }
+
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
   };
 
   /* Get the computed value for a style property */
-  var computed = function(element, property) {
-    return window.getComputedStyle(element).getPropertyValue(property);
+  var computedStyle = function(element, property) {
+    return (typeof property === 'undefined') ? window.getComputedStyle(element) : window.getComputedStyle(element).getPropertyValue(property);
   };
 
   /* Extend an object */

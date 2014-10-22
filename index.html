@@ -12,7 +12,6 @@
         background-color: #eee;
         border-radius: .4rem;
         opacity: 0;
-        padding: .5rem;
         transition: opacity .2s, visibility .2s;
         visibility: hidden;
       }
@@ -82,14 +81,14 @@
       tooltip.bind(tooltipsFramed, { iframe: true });
 
       tooltip.bind(document.getElementsByClassName('tooltip-callback'), {
-        onShow: function(c) { console.log('Open'); },
+        onLoad: function(c) { console.log('Open'); },
         onHide: function(c) { console.log('Close'); }
       });
 
       tooltip.bind(document.getElementsByClassName('tooltip-iframe-callback'), {
         cache: true,
         iframe: true,
-        onShow: function(c) { console.log('Open'); },
+        onLoad: function(c) { console.log('Open'); },
         onHide: function(c) { console.log('Close'); }
       });
     </script>

@@ -5,6 +5,11 @@
 .tooltip-content {
   position: absolute;
 }
+.tooltip-content.dimensions {
+  position: static;
+  display: inline-block;
+  width: auto; height: auto;
+}
 iframe.tooltip-content {
   border: none;
 }
