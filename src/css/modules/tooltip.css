@@ -1,0 +1,17 @@
+/* These rules are recommended for Tooltip.js */
+.tooltip-trigger {
+  position: relative;
+}
+.tooltip-content {
+  position: absolute;
+  max-width: 100vw; max-height: 100vh;
+  overflow: scroll;
+}
+.tooltip-content.dimensions {
+  position: static;
+  display: inline-block;
+  width: auto; height: auto;
+}
+iframe.tooltip-content {
+  border: none;
+}
