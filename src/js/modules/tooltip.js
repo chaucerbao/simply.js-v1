@@ -1,8 +1,12 @@
 var Tooltip = (function(window, document) {
   'use strict';
 
+  var extend = require('../lib/extend.js'),
+    computedStyle = require('../lib/computed-style.js'),
+    load = require('../lib/load.js'),
+    select = require('../lib/selector.js');
+
   var body = document.body,
-    request = new XMLHttpRequest(),
     isInitialized = false,
     optionSets = [],
     moveEvent;
@@ -35,7 +39,7 @@ var Tooltip = (function(window, document) {
       body.addEventListener('mousemove', function(e) {
         var trigger = findTrigger(e.target);
         moveEvent = e;
-        activeTooltip = (trigger) ? trigger.getElementsByClassName('tooltip-content is-active')[0] : null;
+        activeTooltip = (trigger) ? select('.tooltip-content.is-active', trigger)[0] : null;
       });
 
       (function renderLoop() {
@@ -77,7 +81,7 @@ var Tooltip = (function(window, document) {
 
   /* Show the tooltip */
   var show = function(trigger) {
-    var content = trigger.getElementsByClassName('tooltip-content'),
+    var content = select('.tooltip-content', trigger),
       options = loadOptions(trigger),
       tooltip = (content.length) ? content[0] : createTooltip(options),
       target;
@@ -88,8 +92,11 @@ var Tooltip = (function(window, document) {
       options.onLoad = function(tooltip) {
         /* Explicitly set the tooltip's dimensions to its content's size, so it doesn't resize when the position changes */
         tooltip.classList.add('dimensions');
-        tooltip.style.width = tooltip.offsetWidth + 'px';
-        tooltip.style.height = tooltip.offsetHeight + 'px';
+
+        var dimensions = tooltip.getBoundingClientRect();
+        tooltip.style.width = dimensions.width + 'px';
+        tooltip.style.height = dimensions.height + 'px';
+
         tooltip.classList.remove('dimensions');
 
         onLoad(tooltip);
@@ -101,41 +108,12 @@ var Tooltip = (function(window, document) {
       target = trigger.getAttribute('data-tooltip');
 
       /* Populate the tooltip with content */
-      if (target.match(/^([a-z]+:)?\/\//i) || target.match(/^[\w\-. \/]+$/)) {
-        /* Using content from a URL or file */
-        if (options.iframe) {
-          /* Set the iFrame source to this target */
-          tooltip.src = target;
-          tooltip.addEventListener('load', function() { options.onLoad(tooltip); });
-        } else {
-          /* Get the content through AJAX */
-          request.open('GET', target, true);
-          request.onload = function() {
-            if (request.status >= 200 && request.status < 400) {
-              tooltip.innerHTML = request.responseText;
-              options.onLoad(tooltip);
-            } else {
-              tooltip.innerHTML = 'Unable to reach the content';
-            }
-          };
-          request.onerror = function() {
-            tooltip.innerHTML = 'Unable to reach the content';
-          };
-
-          request.send();
-        }
-      } else {
-        /* Using the content inside an element ID or the 'target' parameter value as the content */
-        var html = (target.match(/^#[a-zA-Z][\w:.-]*$/)) ? document.getElementById(target.replace(/^#/, '')).innerHTML : target;
-
-        if (options.iframe) {
-          tooltip.contentWindow.document.write(html);
-        } else {
-          tooltip.innerHTML = html;
-        }
-
+      load(tooltip, target).then(function() {
         options.onLoad(tooltip);
-      }
+      }, function(error) {
+        console.log(error.message);
+      });
+
     }
 
     /* Activate CSS transitions */
@@ -147,7 +125,7 @@ var Tooltip = (function(window, document) {
 
   /* Hide the tooltip */
   var hide = function(trigger) {
-    var tooltip = trigger.getElementsByClassName('tooltip-content is-active')[0];
+    var tooltip = select('.tooltip-content.is-active', trigger)[0];
 
     /* When hide() is triggered in quick succession, the cleanUp() from a previous call may remove the element before the current call completes */
     if (!tooltip) { return; }
@@ -243,26 +221,6 @@ var Tooltip = (function(window, document) {
   /* Get the options associated with a trigger */
   var loadOptions = function(trigger) {
       return optionSets[parseInt(trigger.getAttribute('data-tooltip-options')) - 1];
-  };
-
-  /* Get the computed value for a style property */
-  var computedStyle = function(element, property) {
-    return (typeof property === 'undefined') ? window.getComputedStyle(element) : window.getComputedStyle(element).getPropertyValue(property);
-  };
-
-  /* Extend an object */
-  var extend = function(out) {
-    out = out || {};
-
-    for (var i = 1, length = arguments.length; i < length; i++) {
-      if (!arguments[i]) { continue; }
-
-      for (var key in arguments[i]) {
-        if (arguments[i].hasOwnProperty(key)) { out[key] = arguments[i][key]; }
-      }
-    }
-
-    return out;
   };
 
   return {
