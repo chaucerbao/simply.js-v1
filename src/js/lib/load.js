@@ -14,8 +14,8 @@ var Load = (function(document, Promise) {
           element.addEventListener('load', function() { resolve(element); });
           element.src = target;
         } else {
-          ajax.get(target).then(function(responseText) {
-            element.innerHTML = responseText;
+          ajax.get(target).then(function(response) {
+            element.innerHTML = response.responseText;
             resolve(element);
           }, function(error) {
             reject(error);
