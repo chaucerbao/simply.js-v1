@@ -202,10 +202,12 @@ var Modal = (function(window, document) {
       if (width === 'auto') { width = content.scrollWidth + 'px'; }
       if (height === 'auto') { height = content.scrollHeight + 'px'; }
     } else {
-      var dimensions = computedStyle(content);
       content.classList.add('dimensions');
-      if (width === 'auto') { width = dimensions.width; }
-      if (height === 'auto') { height = dimensions.height; }
+
+      var dimensions = content.getBoundingClientRect();
+      if (width === 'auto') { width = dimensions.width + 'px'; }
+      if (height === 'auto') { height = dimensions.height + 'px'; }
+
       content.classList.remove('dimensions');
     }
 
