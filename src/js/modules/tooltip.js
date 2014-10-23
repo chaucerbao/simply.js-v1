@@ -270,4 +270,4 @@ var Tooltip = (function(window, document) {
   };
 })(window, document);
 
-window.tooltip = Tooltip;
+module.exports = Tooltip;
