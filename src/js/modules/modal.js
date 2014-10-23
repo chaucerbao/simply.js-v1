@@ -275,4 +275,4 @@ var Modal = (function(window, document) {
   };
 })(window, document);
 
-window.modal = Modal;
+module.exports = Modal;
