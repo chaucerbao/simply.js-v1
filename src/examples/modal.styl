@@ -1,0 +1,24 @@
+.modal-layer {
+  z-index: 100;
+}
+.modal-overlay, .modal-frame {
+  opacity: 0;
+  transition: opacity .25s, visibility .25s;
+  visibility: hidden;
+  &.is-active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+.modal-overlay {
+  background-color: rgba(0, 0, 0, .7);
+}
+.modal-frame {
+  transition: opacity .25s, visibility .25s, width .4s, height .4s;
+}
+a.modal-cancel {
+  position: absolute; right: 0; bottom: -1.4rem;
+  &::before {
+    content: "Cancel";
+  }
+}

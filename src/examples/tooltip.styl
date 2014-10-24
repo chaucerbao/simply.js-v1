@@ -1,0 +1,16 @@
+.tooltip-content {
+  background-color: #111;
+  border-radius: .3rem;
+  color: #fff;
+  font: 80% sans-serif;
+  opacity: 0;
+  padding: .5rem;
+  max-width: 400px;
+  transition: opacity .2s, visibility .2s;
+  visibility: hidden;
+  &.is-active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+  }
+}
