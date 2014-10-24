@@ -15,7 +15,7 @@ var Modal = (function(window, document) {
     if (!isInitialized) {
       /* Let <ESC> cancel the modal */
       document.addEventListener('keydown', function(e) {
-        if (layers.length && e.keyCode === 27) { cancel(); }
+        if (e.keyCode === 27 && layers.length) { cancel(); }
       });
 
       /* Clicking the overlay cancels the modal */
@@ -93,11 +93,6 @@ var Modal = (function(window, document) {
       frame = layer.frame,
       content = layer.content;
 
-    /* Make overlay and content invisible */
-    frame.classList.remove('is-active');
-    overlay.classList.remove('is-active');
-    body.classList.remove('no-scroll');
-
     /* Remove the modal layer from the DOM */
     var cleanUp = function(runCallback) {
       if (typeof runCallback === 'undefined') { runCallback = true; }
@@ -113,11 +108,18 @@ var Modal = (function(window, document) {
       cleanUp(runCallback);
     } else {
       isTransitioning = true;
+
       overlay.addEventListener('transitionend', function() {
         isTransitioning = false;
         cleanUp(runCallback);
       });
+
+      /* Activate CSS transitions */
+      frame.classList.remove('is-active');
+      overlay.classList.remove('is-active');
     }
+
+    body.classList.remove('no-scroll');
 
     return layer;
   };
