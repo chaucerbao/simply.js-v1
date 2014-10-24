@@ -102,7 +102,7 @@ var Modal = (function(window, document) {
 
       body.removeChild(layer.element);
     };
-    if (computedStyle(overlay, 'transition-duration') === '0s') {
+    if (computedStyle(overlay).transitionDuration === '0s') {
       cleanUp(runCallback);
     } else {
       isTransitioning = true;
@@ -151,7 +151,7 @@ var Modal = (function(window, document) {
     /* Calculate the z-index for the layer */
     if (!zIndexOffset) {
       body.appendChild(element);
-      zIndexOffset = parseInt(computedStyle(element, 'z-index')) || 100;
+      zIndexOffset = parseInt(computedStyle(element).zIndex) || 100;
       body.removeChild(element);
     }
     overlay.style.zIndex = zIndexOffset + layers.length;

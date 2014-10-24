@@ -131,7 +131,7 @@ var Tooltip = (function(window, document) {
     if (!tooltip) { return; }
 
     /* Remove the tooltip from the DOM */
-    if (computedStyle(tooltip, 'transition-duration') === '0s') {
+    if (computedStyle(tooltip).transitionDuration === '0s') {
       removeTooltip(tooltip);
     } else {
       tooltip.addEventListener('transitionend', removeTooltip);
