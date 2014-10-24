@@ -171,13 +171,16 @@ var Modal = (function(window, document) {
     frame.appendChild(cancel);
 
     /* Set the initial frame dimensions */
-    if (options.iframe) {
-      /* The iFrame dimensions of 300x150 are CSS2 standard dimensions for 'auto' width/height */
-      if (options.width === 'auto') { frame.style.width = '300px'; }
-      if (options.height === 'auto') { frame.style.height = '150px'; }
-    }
-    if (options.width !== 'auto') { frame.style.width = options.width; }
-    if (options.height !== 'auto') { frame.style.height = options.height; }
+    var width = options.width,
+      height = options.height,
+      isFrame = options.iframe;
+
+    /* The iFrame dimensions of 300x150 are CSS2 standard dimensions for 'auto' width/height */
+    if (width === 'auto' && isFrame) { width = '300px'; }
+    if (height === 'auto' && isFrame) { height = '150px'; }
+
+    frame.style.width = width;
+    frame.style.height = height;
 
     return {
       element: element,
@@ -190,8 +193,8 @@ var Modal = (function(window, document) {
 
   /* Resize a modal */
   var resize = function(width, height, layer) {
-    if (typeof layer === 'undefined') {
-      if (layers.length === 0) { return; }
+    if (!layer) {
+      if (!layers.length) { return; }
       layer = layers[layers.length - 1];
     }
 
