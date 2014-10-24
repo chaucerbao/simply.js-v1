@@ -35,7 +35,6 @@ var Modal = (function(window, document) {
     init();
 
     /* Merge the options argument with defaults */
-    if (typeof options !== 'object') { options = {}; }
     options = extend({
       class: '',
       iframe: false,
@@ -44,7 +43,7 @@ var Modal = (function(window, document) {
       onLoad: function() {},
       onClose: function() {},
       onCancel: function() {}
-    }, options);
+    }, options || {});
 
     var layer = createLayer(options),
       overlay = layer.overlay,

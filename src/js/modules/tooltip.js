@@ -31,7 +31,7 @@ var Tooltip = (function(window, document) {
       body.addEventListener('mouseout', function(e) {
         var trigger = findTrigger(e.target),
           related = findTrigger(e.relatedTarget);
-        if (typeof trigger === 'object' && trigger !== related) { hide(trigger); }
+        if (trigger && trigger !== related) { hide(trigger); }
       });
 
       /* Moving the mouse over a trigger will update the tooltip's position */
@@ -58,7 +58,6 @@ var Tooltip = (function(window, document) {
     var target;
 
     /* Merge the options argument with defaults */
-    if (typeof options !== 'object') { options = {}; }
     options = extend({
       class: '',
       cache: false,
@@ -66,7 +65,7 @@ var Tooltip = (function(window, document) {
       position: 'top right cursor',
       onLoad: function() {},
       onHide: function() {}
-    }, options);
+    }, options || {});
 
     optionSets.push(options);
 
