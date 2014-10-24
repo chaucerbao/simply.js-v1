@@ -220,7 +220,7 @@ var Tooltip = (function(window, document) {
 
   /* Get the options associated with a trigger */
   var loadOptions = function(trigger) {
-      return optionSets[parseInt(trigger.getAttribute('data-tooltip-options')) - 1];
+    return optionSets[parseInt(trigger.getAttribute('data-tooltip-options')) - 1];
   };
 
   return {
