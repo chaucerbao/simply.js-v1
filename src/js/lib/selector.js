@@ -3,7 +3,7 @@ var Selector = (function(document) {
 
   var regex = {
     id: /^\#-?[_a-z]+[_a-z0-9-]*$/i,
-    class: /^\.-?[_a-z]+[_a-z0-9-]*$/i,
+    class: /^\.-?[_a-z]+[_a-z0-9-\.]*$/i,
     tag: /^[a-z]+[1-6]?$/i
   };
 
@@ -17,7 +17,7 @@ var Selector = (function(document) {
         results = context.getElementById(target.replace(/^#/, ''));
       } else if (regex.class.test(target)) {
         /* Class */
-        results = context.getElementsByClassName(target.replace(/^\./, ''));
+        results = context.getElementsByClassName(target.replace(/^\./, '').replace(/\./, ' '));
       } else if (regex.tag.test(target)) {
         /* Tag */
         results = context.getElementsByTagName(target);
