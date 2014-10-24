@@ -3,13 +3,15 @@
 /* Source and destination paths */
 var paths = {
   css: { src: './src/css/', dest: './dist/' },
-  js: { src: './src/js/', dest: './dist/' }
+  js: { src: './src/js/', dest: './dist/' },
+  examples: { src: './src/examples/', dest: './dist/examples/' }
 };
 
 /* Files */
 var files = {
   css: { src: [paths.css.src + '**/*.styl', '!' + paths.css.src + '**/_*.styl'], dest: 'simply.min.css' },
-  js: { src: [paths.js.src + '**/*.js'], dest: 'simply.min.js' }
+  js: { src: [paths.js.src + '**/*.js'], dest: 'simply.min.js' },
+  examples: { css: [paths.examples.src + '**/*.styl'], js: [paths.examples.src + '**/*.js'] }
 };
 
 /* Plugins */
@@ -29,13 +31,14 @@ var gulp = require('gulp'),
 gulp.task('watch', ['build'], function() {
   gulp.watch(files.css.src[0], ['css']);
   gulp.watch(files.js.src, ['js']);
+  gulp.watch(files.examples.css, ['examples']);
 });
 
 gulp.task('compress', function() {
-  gulp.src(paths.css.dest + '/**/*.css')
+  gulp.src(paths.css.dest + files.css.dest)
     .pipe(gzip())
     .pipe(gulp.dest(paths.css.dest));
-  gulp.src(paths.js.dest + '/**/*.js')
+  gulp.src(paths.js.dest + files.js.dest)
     .pipe(gzip())
     .pipe(gulp.dest(paths.js.dest));
 });
@@ -65,6 +68,13 @@ gulp.task('js', function() {
     .pipe(gulp.dest(paths.js.dest));
 });
 
-gulp.task('build', ['css', 'js']);
+gulp.task('examples', function() {
+  gulp.src(files.examples.css, { base: paths.examples.src })
+    .pipe(stylus({ 'include css': true }))
+    .pipe(postcss(postcssProcessors))
+    .pipe(gulp.dest(paths.examples.dest));
+});
+
+gulp.task('build', ['css', 'js', 'examples']);
 gulp.task('dist', ['build', 'compress']);
 gulp.task('default', ['watch']);
