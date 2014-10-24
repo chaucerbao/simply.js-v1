@@ -23,7 +23,7 @@ var Load = (function(document, Promise) {
         }
       } else {
         /* From an element ID or the literal value of 'target' */
-        var html = (target.match(/^#[a-zA-Z][\w:.-]*$/)) ? document.getElementById(target.replace(/^#/, '')).innerHTML : target;
+        var html = (target.match(/^#-?[_a-z]+[_a-z0-9-]*$/i)) ? document.getElementById(target.replace(/^#/, '')).innerHTML : target;
 
         if (isFrame) {
           element.contentWindow.document.write(html);

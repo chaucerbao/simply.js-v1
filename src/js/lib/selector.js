@@ -2,7 +2,7 @@ var Selector = (function(document) {
   'use strict';
 
   var regex = {
-    id: /^\#-?[_a-z]+[_a-z0-9-]*$/i,
+    id: /^#-?[_a-z]+[_a-z0-9-]*$/i,
     class: /^\.-?[_a-z]+[_a-z0-9-\.]*$/i,
     tag: /^[a-z]+[1-6]?$/i
   };
