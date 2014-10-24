@@ -84,7 +84,7 @@ var Modal = (function(window, document) {
   /* Close the modal */
   var close = function(runCallback) {
     /* Return immediately if there are no layers (a user may click the overlay/cancel while it's still transitioning out) */
-    if (isTransitioning || layers.length === 0) { return; }
+    if (isTransitioning || !layers.length) { return; }
 
     var layer = layers.pop(),
       overlay = layer.overlay,
@@ -129,10 +129,13 @@ var Modal = (function(window, document) {
 
   /* Generate a new modal layer */
   var createLayer = function(options) {
-    var element = document.createElement('div'),
+    var width = options.width,
+      height = options.height,
+      isFrame = options.iframe,
+      element = document.createElement('div'),
       overlay = document.createElement('div'),
       frame = document.createElement('div'),
-      content = (options.iframe) ? document.createElement('iframe') : document.createElement('div'),
+      content = (isFrame) ? document.createElement('iframe') : document.createElement('div'),
       cancel = document.createElement('a');
 
     /* Add classes to each element */
@@ -146,7 +149,7 @@ var Modal = (function(window, document) {
     cancel.setAttribute('href', '#cancel');
 
     /* Calculate the z-index for the layer */
-    if (typeof zIndexOffset === 'undefined') {
+    if (!zIndexOffset) {
       body.appendChild(element);
       zIndexOffset = parseInt(computedStyle(element, 'z-index')) || 100;
       body.removeChild(element);
@@ -157,7 +160,7 @@ var Modal = (function(window, document) {
     /* Construct the layer element */
     element.appendChild(overlay);
     element.appendChild(frame);
-    if (options.iframe && /iP(ad|hone|od)/.test(navigator.userAgent)) {
+    if (isFrame && /iP(ad|hone|od)/.test(navigator.userAgent)) {
       /* iOS Safari needs this extra layer to allow proper rendering and scrolling of iFrames : http://stackoverflow.com/questions/23337986/iframe-modal-scrolling-on-ipad-iphone */
       var boundry = document.createElement('div');
       boundry.classList.add('modal-boundry');
@@ -168,12 +171,7 @@ var Modal = (function(window, document) {
     }
     frame.appendChild(cancel);
 
-    /* Set the initial frame dimensions */
-    var width = options.width,
-      height = options.height,
-      isFrame = options.iframe;
-
-    /* The iFrame dimensions of 300x150 are CSS2 standard dimensions for 'auto' width/height */
+    /* Set the initial frame dimensions (the iFrame dimensions of 300x150 are CSS2 standard dimensions for 'auto' width/height) */
     if (width === 'auto' && isFrame) { width = '300px'; }
     if (height === 'auto' && isFrame) { height = '150px'; }
 
