@@ -152,7 +152,7 @@ var Tooltip = (function(window, document) {
 
   /* Remove an existing tooltip */
   var removeTooltip = function(tooltip) {
-    if (typeof this !== 'undefined') { tooltip = this; }
+    tooltip = this || tooltip;
 
     var trigger = tooltip.parentNode,
       options = loadOptions(trigger);
