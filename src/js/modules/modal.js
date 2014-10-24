@@ -51,14 +51,12 @@ var Modal = (function(window, document) {
       frame = layer.frame,
       content = layer.content;
 
-    /* Resize the frame after content is loaded if either dimension is set to 'auto' */
-    if (options.width === 'auto' || options.height === 'auto') {
-      var onLoad = options.onLoad;
-      options.onLoad = function(content) {
-        resize(options.width, options.height, layer);
-        onLoad(content);
-      };
-    }
+    /* Resize the frame after content is loaded in case width/height is set to 'auto' */
+    var onLoad = options.onLoad;
+    options.onLoad = function(content) {
+      resize(options.width, options.height, layer);
+      onLoad(content);
+    };
 
     /* Need to append to DOM here, otherwise we can't access the 'contentWindow' of an iFrame */
     body.appendChild(layer.element);
@@ -198,12 +196,12 @@ var Modal = (function(window, document) {
       layer = layers[layers.length - 1];
     }
 
-    var options = layer.options,
-      content = (options.iframe) ? layer.content.contentWindow.document.body : layer.content,
+    var isFrame = layer.options.iframe,
+      content = (isFrame) ? layer.content.contentWindow.document.body : layer.content,
       frame = layer.frame;
 
     /* If width/height is set to 'auto', find the dimensions of the contents */
-    if (options.iframe) {
+    if (isFrame) {
       if (width === 'auto') { width = content.scrollWidth + 'px'; }
       if (height === 'auto') { height = content.scrollHeight + 'px'; }
     } else {
