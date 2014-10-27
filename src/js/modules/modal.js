@@ -3,12 +3,18 @@ var Modal = (function(window, document) {
 
   var extend = require('../lib/extend.js'),
     computedStyle = require('../lib/computed-style.js'),
-    load = require('../lib/load.js');
+    load = require('../lib/load.js'),
+    dom = require('../lib/dom.js'),
+    domCreate = dom.create,
+    domAttach = dom.attach,
+    domDetach = dom.detach,
+    addClass = dom.addClass,
+    removeClass = dom.removeClass,
+    hasClass = dom.hasClass;
 
   var layers = [],
     body = document.body,
     isInitialized = false,
-    isTransitioning = false,
     zIndexOffset;
 
   var init = function() {
@@ -20,7 +26,8 @@ var Modal = (function(window, document) {
 
       /* Clicking the overlay cancels the modal */
       body.addEventListener(('ontouchend' in window) ? 'touchend' : 'click', function(e) {
-        if (e.target && e.target.classList.contains('modal-cancel')) {
+        var element = e.target;
+        if (element && hasClass(element, 'modal-cancel')) {
           e.preventDefault();
           cancel();
         }
@@ -50,28 +57,22 @@ var Modal = (function(window, document) {
       frame = layer.frame,
       content = layer.content;
 
-    /* Resize the frame after content is loaded in case width/height is set to 'auto' */
-    var onLoad = options.onLoad;
-    options.onLoad = function(content) {
-      resize(options.width, options.height, layer);
-      onLoad(content);
-    };
-
     /* Need to append to DOM here, otherwise we can't access the 'contentWindow' of an iFrame */
-    body.appendChild(layer.element);
+    domAttach(body, layer.element);
 
     /* Populate the content element */
     load(content, target).then(function() {
+      resize(options.width, options.height, layer);
       options.onLoad(content);
     }, function(error) {
       console.log(error.message);
     });
 
     /* Activate CSS transitions */
-    body.classList.add('no-scroll');
+    addClass(body, 'no-scroll');
     setTimeout(function() {
-      overlay.classList.add('is-active');
-      frame.classList.add('is-active');
+      addClass(overlay, 'is-active');
+      addClass(frame, 'is-active');
     }, 0);
 
     /* Add layer to the stack */
@@ -81,42 +82,48 @@ var Modal = (function(window, document) {
   };
 
   /* Close the modal */
-  var close = function(runCallback) {
+  var close = function(isClosed) {
+    var layer = topLayer();
+
     /* Return immediately if there are no layers (a user may click the overlay/cancel while it's still transitioning out) */
-    if (isTransitioning || !layers.length) { return; }
+    if (!layer || layer.isTransitioning) { return; }
+    layer.isTransitioning = true;
 
-    var layer = layers.pop(),
-      overlay = layer.overlay,
+    var overlay = layer.overlay,
       frame = layer.frame,
-      content = layer.content;
+      content = layer.content,
+      options = layer.options,
+      overlayStyle = computedStyle(overlay),
+      transitionsTotal = (overlayStyle.transitionDuration === '0s') ? 0 : overlayStyle.transitionProperty.split(',').length;
 
-    /* Remove the modal layer from the DOM */
-    var cleanUp = function(runCallback) {
-      if (typeof runCallback === 'undefined') { runCallback = true; }
-      if (runCallback) {
-        layer.options.onClose(content);
-      } else {
-        layer.options.onCancel(content);
-      }
-
-      body.removeChild(layer.element);
-    };
-    if (computedStyle(overlay).transitionDuration === '0s') {
-      cleanUp(runCallback);
+    if (!transitionsTotal) {
+      destroyLayer();
     } else {
-      isTransitioning = true;
+      var transitionCount = 0;
 
       overlay.addEventListener('transitionend', function() {
-        isTransitioning = false;
-        cleanUp(runCallback);
+        transitionCount++;
+
+        if (transitionCount === transitionsTotal) {
+          if (typeof isClosed === 'undefined') { isClosed = true; }
+
+          /* Run the callback */
+          if (isClosed) {
+            options.onClose(content);
+          } else {
+            options.onCancel(content);
+          }
+
+          destroyLayer();
+        }
       });
 
       /* Activate CSS transitions */
-      frame.classList.remove('is-active');
-      overlay.classList.remove('is-active');
+      removeClass(frame, 'is-active');
+      removeClass(overlay, 'is-active');
     }
 
-    body.classList.remove('no-scroll');
+    removeClass(body, 'no-scroll');
 
     return layer;
   };
@@ -126,53 +133,74 @@ var Modal = (function(window, document) {
     return close(false);
   };
 
+  /* Resize a modal */
+  var resize = function(width, height, layer) {
+    layer = layer || topLayer();
+
+    var isFrame = layer.options.iframe,
+      content = (isFrame) ? layer.content.contentWindow.document.body : layer.content,
+      frame = layer.frame,
+      frameStyle = frame.style;
+
+    /* If width/height is set to 'auto', find the dimensions of the contents */
+    addClass(content, 'dimensions');
+    var dimensions = content.getBoundingClientRect();
+    if (width === 'auto') { width = (isFrame ? content.scrollWidth : dimensions.width) + 'px'; }
+    if (height === 'auto') { height = (isFrame ? content.scrollHeight : dimensions.height) + 'px'; }
+    removeClass(content, 'dimensions');
+
+    frameStyle.width = width;
+    frameStyle.height = height;
+
+    return {
+      width: width,
+      height: height
+    };
+  };
+
   /* Generate a new modal layer */
   var createLayer = function(options) {
     var width = options.width,
       height = options.height,
+
       isFrame = options.iframe,
-      element = document.createElement('div'),
-      overlay = document.createElement('div'),
-      frame = document.createElement('div'),
-      content = (isFrame) ? document.createElement('iframe') : document.createElement('div'),
-      cancel = document.createElement('a');
+      customClass = options.class,
 
-    /* Add classes to each element */
-    element.classList.add('modal-layer');
-    overlay.classList.add('modal-overlay', 'modal-cancel');
-    frame.classList.add('modal-frame');
-    content.classList.add('modal-content');
-    cancel.classList.add('modal-cancel');
-    if (options.class.length) { element.classList.add(options.class); }
+      element = domCreate('div', 'modal-layer'),
+      overlay = domCreate('div', ['modal-overlay', 'modal-cancel']),
+      frame = domCreate('div', 'modal-frame'),
+      content = (isFrame) ? domCreate('iframe') : domCreate('div'),
+      cancel = domCreate('a', 'modal-cancel');
 
+    addClass(content, 'modal-content');
     cancel.setAttribute('href', '#cancel');
+    if (customClass.length) { addClass(element, customClass); }
 
     /* Calculate the z-index for the layer */
     if (!zIndexOffset) {
-      body.appendChild(element);
+      domAttach(body, element);
       zIndexOffset = parseInt(computedStyle(element).zIndex) || 100;
-      body.removeChild(element);
+      domDetach(body, element);
     }
     overlay.style.zIndex = zIndexOffset + layers.length;
-    frame.style.zIndex = (zIndexOffset + 1) + layers.length;
+    frame.style.zIndex = zIndexOffset + layers.length + 1;
 
     /* Construct the layer element */
-    element.appendChild(overlay);
-    element.appendChild(frame);
+    domAttach(element, overlay);
+    domAttach(element, frame);
     if (isFrame && /iP(ad|hone|od)/.test(navigator.userAgent)) {
       /* iOS Safari needs this extra layer to allow proper rendering and scrolling of iFrames : http://stackoverflow.com/questions/23337986/iframe-modal-scrolling-on-ipad-iphone */
-      var boundry = document.createElement('div');
-      boundry.classList.add('modal-boundry');
-      frame.appendChild(boundry);
-      boundry.appendChild(content);
+      var boundry = domCreate('div', 'modal-boundry');
+      domAttach(frame, boundry);
+      domAttach(boundry, content);
     } else {
-      frame.appendChild(content);
+      domAttach(frame, content);
     }
-    frame.appendChild(cancel);
+    domAttach(frame, cancel);
 
     /* Set the initial frame dimensions (the iFrame dimensions of 300x150 are CSS2 standard dimensions for 'auto' width/height) */
-    if (width === 'auto' && isFrame) { width = '300px'; }
-    if (height === 'auto' && isFrame) { height = '150px'; }
+    if (isFrame && width === 'auto') { width = '300px'; }
+    if (isFrame && height === 'auto') { height = '150px'; }
 
     frame.style.width = width;
     frame.style.height = height;
@@ -186,38 +214,16 @@ var Modal = (function(window, document) {
     };
   };
 
-  /* Resize a modal */
-  var resize = function(width, height, layer) {
-    if (!layer) {
-      if (!layers.length) { return; }
-      layer = layers[layers.length - 1];
-    }
+  /* Remove a modal layer from the DOM */
+  var destroyLayer = function() {
+    var layer = layers.pop();
+    domDetach(body, layer.element);
+  };
 
-    var isFrame = layer.options.iframe,
-      content = (isFrame) ? layer.content.contentWindow.document.body : layer.content,
-      frame = layer.frame;
-
-    /* If width/height is set to 'auto', find the dimensions of the contents */
-    if (isFrame) {
-      if (width === 'auto') { width = content.scrollWidth + 'px'; }
-      if (height === 'auto') { height = content.scrollHeight + 'px'; }
-    } else {
-      content.classList.add('dimensions');
-
-      var dimensions = content.getBoundingClientRect();
-      if (width === 'auto') { width = dimensions.width + 'px'; }
-      if (height === 'auto') { height = dimensions.height + 'px'; }
-
-      content.classList.remove('dimensions');
-    }
-
-    frame.style.width = width;
-    frame.style.height = height;
-
-    return {
-      width: width,
-      height: height
-    };
+  /* Get the top modal layer on the stack */
+  var topLayer = function() {
+    var count = layers.length;
+    return (count) ? layers[count - 1] : null;
   };
 
   return {

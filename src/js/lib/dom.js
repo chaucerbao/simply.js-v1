@@ -7,11 +7,11 @@ var DOM = (function(document, Array) {
     return element;
   };
 
-  var attach = function(element, target) {
+  var attach = function(target, element) {
     target.appendChild(element);
   };
 
-  var detach = function(element, target) {
+  var detach = function(target, element) {
     target.removeChild(element);
   };
 
