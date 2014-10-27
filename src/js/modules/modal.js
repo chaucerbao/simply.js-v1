@@ -123,8 +123,6 @@ var Modal = (function(window, document) {
       removeClass(overlay, 'is-active');
     }
 
-    removeClass(body, 'no-scroll');
-
     return layer;
   };
 
@@ -217,6 +215,7 @@ var Modal = (function(window, document) {
   /* Remove a modal layer from the DOM */
   var destroyLayer = function() {
     var layer = layers.pop();
+    if (!layers.length) { removeClass(body, 'no-scroll'); }
     domDetach(body, layer.element);
   };
 
