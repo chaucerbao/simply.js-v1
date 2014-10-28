@@ -3,13 +3,15 @@
   border-radius: .3rem;
   color: #fff;
   font: 80% sans-serif;
+  max-width: 400px;
   opacity: 0;
   padding: .5rem;
-  max-width: 400px;
-  transition: opacity .2s, visibility .2s;
+  transform: translateX(2rem);
+  transition: opacity .2s, visibility .2s, transform .2s;
   visibility: hidden;
   &.is-active {
     opacity: 1;
+    transform: translateX(0);
     visibility: visible;
     z-index: 1;
   }

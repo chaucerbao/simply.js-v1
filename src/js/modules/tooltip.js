@@ -4,11 +4,19 @@ var Tooltip = (function(window, document) {
   var extend = require('../lib/extend.js'),
     computedStyle = require('../lib/computed-style.js'),
     load = require('../lib/load.js'),
-    select = require('../lib/selector.js');
+    select = require('../lib/selector.js'),
+    dom = require('../lib/dom.js'),
+    domCreate = dom.create,
+    domAttach = dom.attach,
+    domDetach = dom.detach,
+    addClass = dom.addClass,
+    removeClass = dom.removeClass,
+    hasClass = dom.hasClass;
 
-  var body = document.body,
+  var optionSets = [],
+    body = document.body,
     isInitialized = false,
-    optionSets = [],
+    activeTooltip,
     moveEvent;
 
   var init = function() {
@@ -16,26 +24,41 @@ var Tooltip = (function(window, document) {
       /* Search parent elements recursively for the tooltip trigger */
       var findTrigger = function(element) {
         /* When mousing in/out of the browser window, you might hit an empty 'relatedTarget' */
-        if (!element || element === document.documentElement) { return false; }
-        if (element.classList.contains('tooltip-trigger')) { return element; }
+        if (!element || element === document.documentElement) { return null; }
+        if (hasClass(element, 'tooltip-trigger')) { return element; }
         return findTrigger(element.parentNode);
       };
 
       /* Mousing over a tooltip shows its contents */
       body.addEventListener('mouseover', function(e) {
-        var trigger = findTrigger(e.target);
-        if (trigger) { show(trigger); }
+        var element = e.target,
+          trigger = findTrigger(element);
+
+        if (trigger) {
+          var related = findTrigger(e.relatedTarget),
+            isInteractive = loadOptions(trigger).interactive;
+
+            if (hasClass(element, 'tooltip-trigger') || (trigger === related && isInteractive)) {
+              show(trigger);
+            }
+        }
       });
 
       /* Mousing out of a tooltip hides its contents */
       body.addEventListener('mouseout', function(e) {
-        var trigger = findTrigger(e.target),
-          related = findTrigger(e.relatedTarget);
-        if (trigger && trigger !== related) { hide(trigger); }
+        var trigger = findTrigger(e.target);
+
+        if (trigger) {
+          var related = findTrigger(e.relatedTarget),
+            isInteractive = loadOptions(trigger).interactive;
+
+          if (!(trigger === related && isInteractive)) {
+            hide(trigger);
+          }
+        }
       });
 
       /* Moving the mouse over a trigger will update the tooltip's position */
-      var activeTooltip;
       body.addEventListener('mousemove', function(e) {
         var trigger = findTrigger(e.target);
         moveEvent = e;
@@ -55,13 +78,12 @@ var Tooltip = (function(window, document) {
   var bind = function(targets, options) {
     init();
 
-    var target;
-
     /* Merge the options argument with defaults */
     options = extend({
       class: '',
       cache: false,
       iframe: false,
+      interactive: false,
       position: 'top right cursor',
       onLoad: function() {},
       onHide: function() {}
@@ -71,97 +93,99 @@ var Tooltip = (function(window, document) {
 
     if (!targets.length) { targets = [targets]; }
     for (var i = 0, length = targets.length; i < length; i++) {
-      target = targets[i];
-
-      target.classList.add('tooltip-trigger');
-      target.setAttribute('data-tooltip-options', optionSets.length);
+      addClass(targets[i], 'tooltip-trigger');
+      targets[i].setAttribute('data-tooltip-options', optionSets.length);
     }
   };
 
-  /* Show the tooltip */
+  /* Show the tooltip associated with the trigger */
   var show = function(trigger) {
     var content = select('.tooltip-content', trigger),
       options = loadOptions(trigger),
-      tooltip = (content.length) ? content[0] : createTooltip(options),
-      target;
+      tooltip = (content.length) ? content[0] : createTooltip(options);
+
+    /* Unset the 'unload' event handler */
+    tooltip.removeEventListener('transitionend', unload);
 
     if (!content.length) {
-      /* Reposition the tooltip after content is loaded */
-      var onLoad = options.onLoad;
-      options.onLoad = function(tooltip) {
-        /* Explicitly set the tooltip's dimensions to its content's size, so it doesn't resize when the position changes */
-        tooltip.classList.add('dimensions');
+      /* Need to append to DOM here, otherwise we can't access the 'contentWindow' of an iFrame */
+      domAttach(trigger, tooltip);
 
+      /* Populate the tooltip with content */
+      load(tooltip, trigger.getAttribute('data-tooltip')).then(function() {
+        /* Explicitly set the tooltip's dimensions to its content's size, so it doesn't resize when the position changes */
+        addClass(tooltip, 'dimensions');
         var dimensions = tooltip.getBoundingClientRect();
         tooltip.style.width = dimensions.width + 'px';
         tooltip.style.height = dimensions.height + 'px';
+        removeClass(tooltip, 'dimensions');
 
-        tooltip.classList.remove('dimensions');
+        /* Reposition the tooltip after dimensions are calculated */
+        reposition(tooltip);
 
-        onLoad(tooltip);
-      };
-
-      /* Need to append to DOM here, otherwise we can't access the 'contentWindow' of an iFrame */
-      trigger.appendChild(tooltip);
-
-      target = trigger.getAttribute('data-tooltip');
-
-      /* Populate the tooltip with content */
-      load(tooltip, target).then(function() {
         options.onLoad(tooltip);
       }, function(error) {
         console.log(error.message);
       });
-
     }
 
     /* Activate CSS transitions */
-    tooltip.removeEventListener('transitionend', removeTooltip);
-    setTimeout(function() { tooltip.classList.add('is-active'); }, 0);
+    setTimeout(function() { addClass(tooltip, 'is-active'); }, 0);
 
     return tooltip;
   };
 
-  /* Hide the tooltip */
+  /* Hide the tooltip associated with the trigger */
   var hide = function(trigger) {
     var tooltip = select('.tooltip-content.is-active', trigger)[0];
-
-    /* When hide() is triggered in quick succession, the cleanUp() from a previous call may remove the element before the current call completes */
     if (!tooltip) { return; }
 
-    /* Remove the tooltip from the DOM */
-    if (computedStyle(tooltip).transitionDuration === '0s') {
-      removeTooltip(tooltip);
+    /* Get the total number of transitions to expect */
+    if (!tooltip.transitionsTotal) {
+      var tooltipStyle = computedStyle(tooltip);
+      tooltip.transitionsTotal = (tooltipStyle.transitionDuration === '0s') ? 0 : tooltipStyle.transitionProperty.split(',').length;
+    }
+
+    if (!tooltip.transitionsTotal) {
+      unload(tooltip);
     } else {
-      tooltip.addEventListener('transitionend', removeTooltip);
-      tooltip.classList.remove('is-active');
+      delete tooltip.transitionCount;
+      tooltip.addEventListener('transitionend', unload);
+    }
+
+    /* Activate CSS transitions */
+    removeClass(tooltip, 'is-active');
+  };
+
+  var unload = function(tooltip) {
+    tooltip = this || tooltip;
+
+    var transitionCount = tooltip.transitionCount || 0,
+      transitionsTotal = tooltip.transitionsTotal;
+
+    /* Count the number of transitions that have occurred */
+    tooltip.transitionCount = ++transitionCount;
+
+    /* When the total is reached, unload the tooltip */
+    if (transitionCount === transitionsTotal || !transitionsTotal) {
+      var trigger = tooltip.parentNode,
+        options = loadOptions(trigger);
+
+      options.onHide(tooltip);
+
+      if (!options.isCached) { domDetach(trigger, tooltip); }
     }
   };
 
   /* Generate a new tooltip */
   var createTooltip = function(options) {
-    var tooltip = (options.iframe) ? document.createElement('iframe') : document.createElement('div');
+    var tooltip = (options.iframe) ? domCreate('iframe') : domCreate('div'),
+      customClass = options.class;
 
-    /* Add classes to each element */
-    tooltip.classList.add('tooltip-content');
-    if (options.class.length) { tooltip.classList.add(options.class); }
+    addClass(tooltip, 'tooltip-content');
+    if (customClass.length) { addClass(tooltip, customClass); }
 
     return tooltip;
-  };
-
-  /* Remove an existing tooltip */
-  var removeTooltip = function(tooltip) {
-    tooltip = this || tooltip;
-
-    var trigger = tooltip.parentNode,
-      options = loadOptions(trigger);
-
-    options.onHide(tooltip);
-
-    if (!options.cache) { trigger.removeChild(tooltip); }
-
-    /* Only run this callback once, in case of multiple transitions */
-    tooltip.removeEventListener('transitionend', removeTooltip);
   };
 
   var reposition = function(tooltip) {
@@ -170,7 +194,7 @@ var Tooltip = (function(window, document) {
     var trigger = tooltip.parentNode,
       options = loadOptions(trigger),
       positions = options.position.split(' '),
-      style = computedStyle(tooltip),
+      tooltipStyle = computedStyle(tooltip),
       self, parent, top, left, offset, i, length;
 
     self = tooltip.getBoundingClientRect();
@@ -183,10 +207,10 @@ var Tooltip = (function(window, document) {
     /* Update the position based on the options  */
     for (i = 0, length = positions.length; i < length; i++) {
       switch (positions[i]) {
-        case 'top': top = -(self.height + parseFloat(style.marginBottom)); break;
-        case 'bottom': top = (parent.height + parseFloat(style.marginTop)); break;
-        case 'left': left = -(self.width + parseFloat(style.marginRight)); break;
-        case 'right': left = (parent.width + parseFloat(style.marginLeft)); break;
+        case 'top': top = -(self.height + parseFloat(tooltipStyle.marginBottom)); break;
+        case 'bottom': top = (parent.height + parseFloat(tooltipStyle.marginTop)); break;
+        case 'left': left = -(self.width + parseFloat(tooltipStyle.marginRight)); break;
+        case 'right': left = (parent.width + parseFloat(tooltipStyle.marginLeft)); break;
       }
     }
 
