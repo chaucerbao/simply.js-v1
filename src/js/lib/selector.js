@@ -7,7 +7,7 @@ var Selector = (function(document) {
     tag: /^[a-z]+[1-6]?$/i
   };
 
-  var selector = function(target, context) {
+  var find = function(target, context) {
     var results;
     context = context || document;
 
@@ -32,7 +32,33 @@ var Selector = (function(document) {
     return results;
   };
 
-  return selector;
+  var findParent = function(target, element) {
+    var parentNode, targetName, targetRegex;
+
+    do {
+      parentNode = element.parentNode;
+      targetName = target.replace(/^[#\.]/, '');
+      targetRegex = new RegExp('^' + targetName + '$', 'i');
+
+      if (
+        regex.id.test(target) && targetRegex.test(element.id) ||
+        regex.class.test(target) && element.classList.contains(targetName) ||
+        regex.tag.test(target) && targetRegex.test(element.tagName)
+      ) {
+        return element;
+      }
+
+      element = parentNode;
+    } while (element !== document.documentElement);
+
+    return null;
+  };
+
+
+  return {
+    find: find,
+    findParent: findParent
+  };
 })(document);
 
 module.exports = Selector;
