@@ -8,6 +8,7 @@ var Simply = (function() {
 
     /* Modules */
     modal: require('./modules/modal.js'),
+    pin: require('./modules/pin.js'),
     tooltip: require('./modules/tooltip.js')
   };
 })();

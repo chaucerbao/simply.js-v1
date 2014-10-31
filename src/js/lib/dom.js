@@ -11,6 +11,10 @@ var DOM = (function(document, Array) {
     target.appendChild(element);
   };
 
+  var attachBefore = function(target, element) {
+    target.parentNode.insertBefore(element, target);
+  };
+
   var detach = function(target, element) {
     target.removeChild(element);
   };
@@ -34,6 +38,7 @@ var DOM = (function(document, Array) {
   return {
     create: create,
     attach: attach,
+    attachBefore: attachBefore,
     detach: detach,
     addClass: addClass,
     removeClass: removeClass,
