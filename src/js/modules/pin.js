@@ -48,6 +48,8 @@ var Pin = (function(window, document) {
       /* Create a placeholder */
       placeholder = domCreate('div', 'pin-placeholder');
       placeholder.style.height = elementStyle.height;
+      placeholder.style.marginTop = elementStyle.marginTop;
+      placeholder.style.marginBottom = elementStyle.marginBottom;
 
       /* Wrap the placeholder around the element */
       domAttachBefore(element, placeholder);
