@@ -2,7 +2,7 @@ var Modal = (function(window, document) {
   'use strict';
 
   var extend = require('../lib/extend.js'),
-    computedStyle = require('../lib/computed-style.js'),
+    computedStyle = require('../lib/computed.js').style,
     load = require('../lib/load.js'),
     dom = require('../lib/dom.js'),
     domCreate = dom.create,

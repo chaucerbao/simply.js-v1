@@ -3,7 +3,9 @@ var Pin = (function(window, document) {
 
   var extend = require('../lib/extend.js'),
     findParent = require('../lib/selector.js').findParent,
-    computedStyle = require('../lib/computed-style.js'),
+    computed = require('../lib/computed.js'),
+    computedStyle = computed.style,
+    computedOffset = computed.offset,
     dom = require('../lib/dom.js'),
     domCreate = dom.create,
     domAttach = dom.attach,
@@ -60,8 +62,8 @@ var Pin = (function(window, document) {
 
       stack.push({
         element: element,
-        originalY: offset(element).top,
-        boundingY: offset(container).top + parseFloat(computedStyle(container).height)
+        originalY: computedOffset(element).top,
+        boundingY: computedOffset(container).top + parseFloat(computedStyle(container).height)
       });
     }
   };
@@ -99,26 +101,6 @@ var Pin = (function(window, document) {
         removeClass(element, 'pin-pinned');
       }
     }
-  };
-
-  /* Calculate the absolute position of an element */
-  var offset = function(element) {
-    var elementStyle = computedStyle(element),
-      left = -parseFloat(elementStyle.marginLeft),
-      top = -parseFloat(elementStyle.marginTop);
-
-    if (element.offsetParent) {
-      do {
-        left += element.offsetLeft;
-        top += element.offsetTop;
-        element = element.offsetParent;
-      } while (element);
-    }
-
-    return {
-      left: left,
-      top: top
-    };
   };
 
   return {
