@@ -7,28 +7,18 @@ var Computed = (function(window) {
   };
 
   /* Calculate the absolute position of an element */
-  var offset = function(element) {
-    var elementStyle = style(element),
-      left = -parseFloat(elementStyle.marginLeft),
-      top = -parseFloat(elementStyle.marginTop);
-
-    if (element.offsetParent) {
-      do {
-        left += element.offsetLeft;
-        top += element.offsetTop;
-        element = element.offsetParent;
-      } while (element);
-    }
+  var position = function(element) {
+    var rect = element.getBoundingClientRect();
 
     return {
-      left: left,
-      top: top
+      left: window.pageXOffset + rect.left,
+      top: window.pageYOffset + rect.top
     };
   };
 
   return {
     style: style,
-    offset: offset
+    position: position
   };
 })(window);
 

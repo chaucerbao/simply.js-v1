@@ -5,7 +5,7 @@ var Pin = (function(window, document) {
     findParent = require('../lib/selector.js').findParent,
     computed = require('../lib/computed.js'),
     computedStyle = computed.style,
-    computedOffset = computed.offset,
+    computedPosition = computed.position,
     dom = require('../lib/dom.js'),
     domCreate = dom.create,
     domAttach = dom.attach,
@@ -36,10 +36,11 @@ var Pin = (function(window, document) {
       container: ''
     }, options || {});
 
-    var element,
-      placeholder,
+    var placeholder,
+      element,
       elementStyle,
-      container;
+      container,
+      containerStyle;
 
     if (!targets.length) { targets = [targets]; }
     for (var i = 0, length = targets.length; i < length; i++) {
@@ -59,11 +60,12 @@ var Pin = (function(window, document) {
 
       /* Get the container's dimensions */
       container = findParent(options.container, placeholder) || document.body;
+      containerStyle = computedStyle(container);
 
       stack.push({
         element: element,
-        originalY: computedOffset(element).top,
-        boundingY: computedOffset(container).top + parseFloat(computedStyle(container).height)
+        originalY: computedPosition(element).top - parseFloat(elementStyle.marginTop),
+        boundingY: computedPosition(container).top - parseFloat(containerStyle.marginTop) + parseFloat(containerStyle.height)
       });
     }
   };
