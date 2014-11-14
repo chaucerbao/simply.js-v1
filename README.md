@@ -24,7 +24,7 @@ simply.select.findParent(target, element)
 Finds an `element`'s nearest parent that matches the `target` ('#id', '.class', or 'tag').
 
 ### Ajax
-A helper to make AJAX calls. Returns a promise, defined by Promises/A+.
+A helper to make AJAX calls. Returns a promise, defined by Promises/A+, and passes the response to the callback.
 
 ```js
 simply.ajax.get(url)
@@ -39,7 +39,7 @@ A modal library that supports having multiple layers of modals.
 simply.modal.open(target[, options])
 ```
 
-Opens a modal containing the `target` ('#id', 'http://url/', 'Inline HTML') content.
+Opens a modal containing the `target` ('#id', 'http://url/', '&lt;span&gt;Inline HTML&lt;/span&gt;') content.
 
 ```js
 simply.modal.close()
@@ -60,7 +60,7 @@ simply.modal.resize(width, height)
 Resizes the modal on the top layer.
 
 ### Pin
-A library that pins an element onto the viewport.
+A library that pins an element onto the top of the viewport when scrolling past. It can be confined within a container.
 
 
 ```js
@@ -76,4 +76,4 @@ A tooltip library
 simply.tooltip.bind(targets[, options])
 ```
 
-Adds a tooltip to the `targets` (DOM element(s)).
+Adds a tooltip to the `targets` (DOM element(s)) that activate on hover.
